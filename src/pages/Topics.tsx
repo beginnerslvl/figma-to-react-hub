@@ -204,6 +204,31 @@ export default function Topics() {
         <p className="text-muted-foreground mt-1">Manage content topics and categories for your clients</p>
       </div>
 
+      {/* Categories Section */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Categories</h2>
+        {categoriesLoading ? (
+          <div className="text-center py-8 text-muted-foreground">Loading categories...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {categories.map((category) => (
+              <Card
+                key={category.category_id}
+                className="cursor-pointer hover:shadow-lg transition-all"
+                onClick={() => setSelectedCategory(category.category_id)}
+              >
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-primary" />
+                    {category.category_name}
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Top Panel */}
       <Card>
         <CardContent className="pt-6">
