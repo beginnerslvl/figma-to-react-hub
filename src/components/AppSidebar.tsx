@@ -1,4 +1,4 @@
-import { Home, FileText, MessageSquare, Calendar, BarChart3, Briefcase, Share2, HelpCircle } from "lucide-react";
+import { Home, FileText, MessageSquare, Users, Calendar, BarChart3, Briefcase, Share2, HelpCircle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -16,6 +16,7 @@ const navigationItems = [
   { title: "Home", url: "/", icon: Home },
   { title: "Posts", url: "/posts", icon: FileText },
   { title: "Topics", url: "/topics", icon: MessageSquare },
+  { title: "Clients", url: "/clients", icon: Users },
   { title: "Calendar", url: "/calendar", icon: Calendar },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ];

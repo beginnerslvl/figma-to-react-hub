@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
+import CreateBusiness from "./pages/CreateBusiness";
+import Clients from "./pages/Clients";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,9 +29,10 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/posts" element={<Index />} />
                 <Route path="/topics" element={<Index />} />
+                <Route path="/clients" element={<Clients />} />
                 <Route path="/calendar" element={<Index />} />
                 <Route path="/analytics" element={<Index />} />
-                <Route path="/create-business" element={<Index />} />
+                <Route path="/create-business" element={<CreateBusiness />} />
                 <Route path="/connect-social" element={<Index />} />
                 <Route path="/help" element={<Index />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
