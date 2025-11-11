@@ -22,58 +22,67 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Mock data
-const mockClients = [
-  { id: "CLT-001", name: "Zuhd Dental" },
-  { id: "CLT-002", name: "Tech Startup Co" },
-];
+const API_BASE = "https://1c582916dab5.ngrok-free.app";
 
-const mockCategories = [
-  { id: "CAT-001", name: "Dental & Aesthetic Care", clientId: "CLT-001" },
-  { id: "CAT-002", name: "Product Launch", clientId: "CLT-002" },
-];
+interface Category {
+  category_id: string;
+  category_name: string;
+}
 
-const mockTopics = [
-  {
-    id: "TOP-001",
-    categoryId: "CAT-001",
-    categoryName: "Dental & Aesthetic Care",
-    title: "Benefits of Modern Cosmetic Dentistry",
-    description: "Highlight how modern techniques enhance natural smiles and confidence.",
-  },
-  {
-    id: "TOP-002",
-    categoryId: "CAT-001",
-    categoryName: "Dental & Aesthetic Care",
-    title: "Teeth Whitening: What to Expect",
-    description: "A detailed guide on professional teeth whitening procedures.",
-  },
-  {
-    id: "TOP-003",
-    categoryId: "CAT-002",
-    categoryName: "Product Launch",
-    title: "New Product Features",
-    description: "Showcase the latest features in our product lineup.",
-  },
-  {
-    id: "TOP-004",
-    categoryId: "CAT-001",
-    categoryName: "Dental & Aesthetic Care",
-    title: "Veneers vs. Bonding",
-    description: "Compare cosmetic options for perfecting your smile.",
-  },
-  {
-    id: "TOP-005",
-    categoryId: "CAT-002",
-    categoryName: "Product Launch",
-    title: "Customer Success Stories",
-    description: "Real testimonials from satisfied customers.",
-  },
-];
+interface Topic {
+  topic_id: string;
+  category_id: string;
+  title: string;
+  description: string;
+}
+
+// API functions
+const fetchCategories = async (): Promise<Category[]> => {
+  const response = await fetch(`${API_BASE}/get-all-categories`);
+  if (!response.ok) throw new Error("Failed to fetch categories");
+  const data = await response.json();
+  return data.categories;
+};
+
+const fetchTopics = async (): Promise<Topic[]> => {
+  const response = await fetch(`${API_BASE}/get-all-topics`);
+  if (!response.ok) throw new Error("Failed to fetch topics");
+  const data = await response.json();
+  return data.topics;
+};
+
+const createCategory = async (categoryName: string) => {
+  const response = await fetch(`${API_BASE}/create-category`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ category_name: categoryName }),
+  });
+  if (!response.ok) throw new Error("Failed to create category");
+  return response.json();
+};
+
+const createTopic = async (data: { category_id: string; title: string; description: string }) => {
+  const response = await fetch(`${API_BASE}/create-topic`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Failed to create topic");
+  return response.json();
+};
+
+const deleteTopic = async (topicId: string) => {
+  const response = await fetch(`${API_BASE}/remove-topic?topic_id=${topicId}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Failed to delete topic");
+  return response.json();
+};
 
 export default function Topics() {
-  const [selectedClient, setSelectedClient] = useState<string>("");
+  const queryClient = useQueryClient();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isAddTopicOpen, setIsAddTopicOpen] = useState(false);
@@ -83,38 +92,98 @@ export default function Topics() {
     description: "",
   });
 
-  const filteredCategories = mockCategories.filter(
-    (cat) => cat.clientId === selectedClient
-  );
+  // Fetch categories
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
 
-  const handleAddCategory = () => {
-    if (newCategoryName.trim()) {
+  // Fetch topics
+  const { data: topics = [], isLoading: topicsLoading } = useQuery({
+    queryKey: ["topics"],
+    queryFn: fetchTopics,
+  });
+
+  // Create category mutation
+  const createCategoryMutation = useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast({
         title: "Category Created",
         description: `"${newCategoryName}" has been added successfully.`,
       });
       setNewCategoryName("");
       setIsAddCategoryOpen(false);
-    }
-  };
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create category. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
-  const handleAddTopic = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTopic.title.trim() && newTopic.description.trim()) {
+  // Create topic mutation
+  const createTopicMutation = useMutation({
+    mutationFn: createTopic,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["topics"] });
       toast({
         title: "Topic Created",
         description: `"${newTopic.title}" has been added successfully.`,
       });
       setNewTopic({ title: "", description: "" });
       setIsAddTopicOpen(false);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create topic. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete topic mutation
+  const deleteTopicMutation = useMutation({
+    mutationFn: deleteTopic,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["topics"] });
+      toast({
+        title: "Topic Removed",
+        description: "Topic has been deleted successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete topic. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleAddCategory = () => {
+    if (newCategoryName.trim()) {
+      createCategoryMutation.mutate(newCategoryName);
     }
   };
 
-  const handleDeleteTopic = (topicId: string, title: string) => {
-    toast({
-      title: "Topic Removed",
-      description: `"${title}" has been deleted.`,
-    });
+  const handleAddTopic = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newTopic.title.trim() && newTopic.description.trim() && selectedCategory) {
+      createTopicMutation.mutate({
+        category_id: selectedCategory,
+        title: newTopic.title,
+        description: newTopic.description,
+      });
+    }
+  };
+
+  const handleDeleteTopic = (topicId: string) => {
+    deleteTopicMutation.mutate(topicId);
   };
 
   const handleTopicClick = (topicTitle: string) => {
@@ -123,6 +192,16 @@ export default function Topics() {
       description: `Loading posts for "${topicTitle}"...`,
     });
   };
+
+  // Get category name by ID
+  const getCategoryName = (categoryId: string) => {
+    return categories.find((c) => c.category_id === categoryId)?.category_name || "Unknown";
+  };
+
+  // Filter topics by selected category
+  const filteredTopics = selectedCategory
+    ? topics.filter((t) => t.category_id === selectedCategory)
+    : topics;
 
   return (
     <div className="p-6 space-y-6">
@@ -138,192 +217,190 @@ export default function Topics() {
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-wrap gap-4 items-end">
-            {/* Select Client */}
+            {/* Select Category */}
             <div className="flex-1 min-w-[200px]">
-              <Label htmlFor="client-select">Select Client</Label>
-              <Select value={selectedClient} onValueChange={setSelectedClient}>
-                <SelectTrigger id="client-select">
-                  <SelectValue placeholder="Choose a client..." />
+              <Label htmlFor="category-select">Select Category</Label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger id="category-select" disabled={categoriesLoading}>
+                  <SelectValue placeholder={categoriesLoading ? "Loading..." : "Choose a category..."} />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockClients.map((client) => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.name}
+                  {categories.map((category) => (
+                    <SelectItem key={category.category_id} value={category.category_id}>
+                      {category.category_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Select Category - Only shown after client selection */}
-            {selectedClient && (
-              <>
-                <div className="flex-1 min-w-[200px]">
-                  <Label htmlFor="category-select">Select Category</Label>
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger id="category-select">
-                      <SelectValue placeholder="Choose a category..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filteredCategories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+            {/* Add Category */}
+            {isAddCategoryOpen ? (
+              <div className="flex gap-2 items-end">
+                <div>
+                  <Label htmlFor="new-category">New Category</Label>
+                  <Input
+                    id="new-category"
+                    placeholder="Category name..."
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAddCategory();
+                      if (e.key === "Escape") setIsAddCategoryOpen(false);
+                    }}
+                    disabled={createCategoryMutation.isPending}
+                  />
                 </div>
+                <Button 
+                  onClick={handleAddCategory} 
+                  size="sm"
+                  disabled={createCategoryMutation.isPending}
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => setIsAddCategoryOpen(false)}
+                  variant="ghost"
+                  size="sm"
+                  disabled={createCategoryMutation.isPending}
+                >
+                  Cancel
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setIsAddCategoryOpen(true)}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Category
+              </Button>
+            )}
 
-                {/* Add Category */}
-                {isAddCategoryOpen ? (
-                  <div className="flex gap-2 items-end">
-                    <div>
-                      <Label htmlFor="new-category">New Category</Label>
+            {/* Add Topic */}
+            <Dialog open={isAddTopicOpen} onOpenChange={setIsAddTopicOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" disabled={!selectedCategory}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Topic
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <form onSubmit={handleAddTopic}>
+                  <DialogHeader>
+                    <DialogTitle>Add New Topic</DialogTitle>
+                    <DialogDescription>
+                      Create a new content topic for your selected category
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="topic-title">Title *</Label>
                       <Input
-                        id="new-category"
-                        placeholder="Category name..."
-                        value={newCategoryName}
-                        onChange={(e) => setNewCategoryName(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleAddCategory();
-                          if (e.key === "Escape") setIsAddCategoryOpen(false);
-                        }}
+                        id="topic-title"
+                        placeholder="Enter topic title..."
+                        value={newTopic.title}
+                        onChange={(e) =>
+                          setNewTopic({ ...newTopic, title: e.target.value })
+                        }
+                        required
+                        disabled={createTopicMutation.isPending}
                       />
                     </div>
-                    <Button onClick={handleAddCategory} size="sm">
-                      Save
-                    </Button>
-                    <Button
-                      onClick={() => setIsAddCategoryOpen(false)}
-                      variant="ghost"
-                      size="sm"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => setIsAddCategoryOpen(true)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Category
-                  </Button>
-                )}
-
-                {/* Add Topic */}
-                <Dialog open={isAddTopicOpen} onOpenChange={setIsAddTopicOpen}>
-                  <DialogTrigger asChild>
-                    <Button size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Topic
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <form onSubmit={handleAddTopic}>
-                      <DialogHeader>
-                        <DialogTitle>Add New Topic</DialogTitle>
-                        <DialogDescription>
-                          Create a new content topic for your selected category
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4 py-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="topic-title">Title *</Label>
-                          <Input
-                            id="topic-title"
-                            placeholder="Enter topic title..."
-                            value={newTopic.title}
-                            onChange={(e) =>
-                              setNewTopic({ ...newTopic, title: e.target.value })
-                            }
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="topic-description">Description *</Label>
-                          <Textarea
-                            id="topic-description"
-                            placeholder="Describe the topic..."
-                            value={newTopic.description}
-                            onChange={(e) =>
-                              setNewTopic({ ...newTopic, description: e.target.value })
-                            }
-                            required
-                          />
-                        </div>
-                        {selectedCategory && (
-                          <div className="text-sm text-muted-foreground">
-                            Category:{" "}
-                            <span className="font-medium">
-                              {filteredCategories.find((c) => c.id === selectedCategory)?.name}
-                            </span>
-                          </div>
-                        )}
+                    <div className="space-y-2">
+                      <Label htmlFor="topic-description">Description *</Label>
+                      <Textarea
+                        id="topic-description"
+                        placeholder="Describe the topic..."
+                        value={newTopic.description}
+                        onChange={(e) =>
+                          setNewTopic({ ...newTopic, description: e.target.value })
+                        }
+                        required
+                        disabled={createTopicMutation.isPending}
+                      />
+                    </div>
+                    {selectedCategory && (
+                      <div className="text-sm text-muted-foreground">
+                        Category:{" "}
+                        <span className="font-medium">
+                          {getCategoryName(selectedCategory)}
+                        </span>
                       </div>
-                      <DialogFooter>
-                        <Button type="submit">Save Topic</Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-              </>
-            )}
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" disabled={createTopicMutation.isPending}>
+                      {createTopicMutation.isPending ? "Saving..." : "Save Topic"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>
 
       {/* Topics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {mockTopics.map((topic) => (
+      {topicsLoading ? (
+        <div className="text-center py-12 text-muted-foreground">Loading topics...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredTopics.map((topic) => (
+            <Card
+              key={topic.topic_id}
+              className="group cursor-pointer hover:shadow-lg transition-all relative"
+              onClick={() => handleTopicClick(topic.title)}
+            >
+              <CardHeader>
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-lg">{topic.title}</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 shrink-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTopic(topic.topic_id);
+                    }}
+                    disabled={deleteTopicMutation.isPending}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+                <CardDescription className="line-clamp-2">{topic.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Tag className="h-3 w-3" />
+                  <span>{getCategoryName(topic.category_id)}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* Add Topic Card */}
           <Card
-            key={topic.id}
-            className="group cursor-pointer hover:shadow-lg transition-all relative"
-            onClick={() => handleTopicClick(topic.title)}
+            className="border-dashed cursor-pointer hover:border-primary hover:bg-accent/50 transition-all flex items-center justify-center min-h-[200px]"
+            onClick={() => selectedCategory ? setIsAddTopicOpen(true) : toast({
+              title: "Select a category",
+              description: "Please select a category first to add a topic.",
+              variant: "destructive",
+            })}
           >
-            <CardHeader>
-              <div className="flex items-start justify-between gap-2">
-                <CardTitle className="text-lg">{topic.title}</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 shrink-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteTopic(topic.id, topic.title);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
-              <CardDescription className="line-clamp-2">{topic.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Tag className="h-3 w-3" />
-                <span>{topic.categoryName}</span>
+            <CardContent className="text-center py-8">
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Plus className="h-6 w-6 text-primary" />
+                </div>
+                <p className="font-medium">Add New Topic</p>
+                <p className="text-sm text-muted-foreground">Create a content topic</p>
               </div>
             </CardContent>
           </Card>
-        ))}
-
-        {/* Add Topic Card */}
-        <Card
-          className="border-dashed cursor-pointer hover:border-primary hover:bg-accent/50 transition-all flex items-center justify-center min-h-[200px]"
-          onClick={() => setIsAddTopicOpen(true)}
-        >
-          <CardContent className="text-center py-8">
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Plus className="h-6 w-6 text-primary" />
-              </div>
-              <p className="font-medium">Add New Topic</p>
-              <p className="text-sm text-muted-foreground">Create a content topic</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
