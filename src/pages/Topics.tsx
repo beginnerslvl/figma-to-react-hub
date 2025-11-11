@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Plus, Trash2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +37,7 @@ const fetchCategories = async (): Promise<Category[]> => {
   const response = await fetch(`${API_BASE}/get-all-categories`);
   if (!response.ok) throw new Error("Failed to fetch categories");
   const data = await response.json();
+  prompt(data.categories);
   return data.categories;
 };
 
@@ -199,18 +194,14 @@ export default function Topics() {
   };
 
   // Filter topics by selected category
-  const filteredTopics = selectedCategory
-    ? topics.filter((t) => t.category_id === selectedCategory)
-    : topics;
+  const filteredTopics = selectedCategory ? topics.filter((t) => t.category_id === selectedCategory) : topics;
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Topics</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage content topics and categories for your clients
-        </p>
+        <p className="text-muted-foreground mt-1">Manage content topics and categories for your clients</p>
       </div>
 
       {/* Top Panel */}
@@ -251,11 +242,7 @@ export default function Topics() {
                     disabled={createCategoryMutation.isPending}
                   />
                 </div>
-                <Button 
-                  onClick={handleAddCategory} 
-                  size="sm"
-                  disabled={createCategoryMutation.isPending}
-                >
+                <Button onClick={handleAddCategory} size="sm" disabled={createCategoryMutation.isPending}>
                   Save
                 </Button>
                 <Button
@@ -268,11 +255,7 @@ export default function Topics() {
                 </Button>
               </div>
             ) : (
-              <Button
-                onClick={() => setIsAddCategoryOpen(true)}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={() => setIsAddCategoryOpen(true)} variant="outline" size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Category
               </Button>
@@ -290,9 +273,7 @@ export default function Topics() {
                 <form onSubmit={handleAddTopic}>
                   <DialogHeader>
                     <DialogTitle>Add New Topic</DialogTitle>
-                    <DialogDescription>
-                      Create a new content topic for your selected category
-                    </DialogDescription>
+                    <DialogDescription>Create a new content topic for your selected category</DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
@@ -301,9 +282,7 @@ export default function Topics() {
                         id="topic-title"
                         placeholder="Enter topic title..."
                         value={newTopic.title}
-                        onChange={(e) =>
-                          setNewTopic({ ...newTopic, title: e.target.value })
-                        }
+                        onChange={(e) => setNewTopic({ ...newTopic, title: e.target.value })}
                         required
                         disabled={createTopicMutation.isPending}
                       />
@@ -314,19 +293,14 @@ export default function Topics() {
                         id="topic-description"
                         placeholder="Describe the topic..."
                         value={newTopic.description}
-                        onChange={(e) =>
-                          setNewTopic({ ...newTopic, description: e.target.value })
-                        }
+                        onChange={(e) => setNewTopic({ ...newTopic, description: e.target.value })}
                         required
                         disabled={createTopicMutation.isPending}
                       />
                     </div>
                     {selectedCategory && (
                       <div className="text-sm text-muted-foreground">
-                        Category:{" "}
-                        <span className="font-medium">
-                          {getCategoryName(selectedCategory)}
-                        </span>
+                        Category: <span className="font-medium">{getCategoryName(selectedCategory)}</span>
                       </div>
                     )}
                   </div>
@@ -383,11 +357,15 @@ export default function Topics() {
           {/* Add Topic Card */}
           <Card
             className="border-dashed cursor-pointer hover:border-primary hover:bg-accent/50 transition-all flex items-center justify-center min-h-[200px]"
-            onClick={() => selectedCategory ? setIsAddTopicOpen(true) : toast({
-              title: "Select a category",
-              description: "Please select a category first to add a topic.",
-              variant: "destructive",
-            })}
+            onClick={() =>
+              selectedCategory
+                ? setIsAddTopicOpen(true)
+                : toast({
+                    title: "Select a category",
+                    description: "Please select a category first to add a topic.",
+                    variant: "destructive",
+                  })
+            }
           >
             <CardContent className="text-center py-8">
               <div className="flex flex-col items-center gap-2">
