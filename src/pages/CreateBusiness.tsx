@@ -100,7 +100,7 @@ export default function CreateBusiness() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="services">Services</Label>
+                  <Label htmlFor="services">Services *</Label>
                   <Textarea
                     id="services"
                     name="services"
@@ -108,10 +108,11 @@ export default function CreateBusiness() {
                     value={formData.services}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="business_description">Business Description</Label>
+                  <Label htmlFor="business_description">Business Description *</Label>
                   <Textarea
                     id="business_description"
                     name="business_description"
@@ -119,10 +120,11 @@ export default function CreateBusiness() {
                     value={formData.business_description}
                     onChange={handleChange}
                     rows={4}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="audience">Target Audience</Label>
+                  <Label htmlFor="audience">Target Audience *</Label>
                   <Textarea
                     id="audience"
                     name="audience"
@@ -130,6 +132,7 @@ export default function CreateBusiness() {
                     value={formData.audience}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
               </CardContent>
@@ -144,7 +147,7 @@ export default function CreateBusiness() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="writing_instructions">Writing Instructions</Label>
+                  <Label htmlFor="writing_instructions">Writing Instructions *</Label>
                   <Textarea
                     id="writing_instructions"
                     name="writing_instructions"
@@ -152,40 +155,44 @@ export default function CreateBusiness() {
                     value={formData.writing_instructions}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tagline">Tagline</Label>
+                  <Label htmlFor="tagline">Tagline *</Label>
                   <Input
                     id="tagline"
                     name="tagline"
                     placeholder="e.g., @zuhddental"
                     value={formData.tagline}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="call_to_actions">Call to Actions (comma-separated)</Label>
+                  <Label htmlFor="call_to_actions">Call to Actions (comma-separated) *</Label>
                   <Input
                     id="call_to_actions"
                     name="call_to_actions"
                     placeholder="e.g., Book Now, Get a Consultation"
                     value={formData.call_to_actions}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="caption_ending">Caption Ending</Label>
+                  <Label htmlFor="caption_ending">Caption Ending *</Label>
                   <Input
                     id="caption_ending"
                     name="caption_ending"
                     placeholder="e.g., ✨ Experience refined dental artistry."
                     value={formData.caption_ending}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="writing_samples">Writing Samples (one per line)</Label>
+                  <Label htmlFor="writing_samples">Writing Samples (one per line) *</Label>
                   <Textarea
                     id="writing_samples"
                     name="writing_samples"
@@ -193,6 +200,7 @@ export default function CreateBusiness() {
                     value={formData.writing_samples}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
               </CardContent>
@@ -207,17 +215,18 @@ export default function CreateBusiness() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="contact_info">Contact Info</Label>
+                  <Label htmlFor="contact_info">Contact Info *</Label>
                   <Input
                     id="contact_info"
                     name="contact_info"
                     placeholder="e.g., Zuhd Dental Care, Downtown, LA"
                     value={formData.contact_info}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="website">Website</Label>
+                  <Label htmlFor="website">Website *</Label>
                   <Input
                     id="website"
                     name="website"
@@ -225,10 +234,11 @@ export default function CreateBusiness() {
                     placeholder="https://example.com"
                     value={formData.website}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="number">Phone Number</Label>
+                  <Label htmlFor="number">Phone Number *</Label>
                   <Input
                     id="number"
                     name="number"
@@ -236,10 +246,11 @@ export default function CreateBusiness() {
                     placeholder="+1 (872) 258-9898"
                     value={formData.number}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="mail">Email</Label>
+                  <Label htmlFor="mail">Email *</Label>
                   <Input
                     id="mail"
                     name="mail"
@@ -247,6 +258,7 @@ export default function CreateBusiness() {
                     placeholder="care@example.com"
                     value={formData.mail}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </CardContent>
@@ -261,37 +273,40 @@ export default function CreateBusiness() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="brand_colors">Brand Colors (comma-separated hex codes)</Label>
+                  <Label htmlFor="brand_colors">Brand Colors (comma-separated hex codes) *</Label>
                   <Input
                     id="brand_colors"
                     name="brand_colors"
                     placeholder="e.g., #E9E6DF, #7DA89A, #1C1C1C"
                     value={formData.brand_colors}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="typography">Typography</Label>
+                  <Label htmlFor="typography">Typography *</Label>
                   <Input
                     id="typography"
                     name="typography"
                     placeholder="e.g., Sans-serif (Lato / Playfair Display)"
                     value={formData.typography}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="design_style">Design Style</Label>
+                  <Label htmlFor="design_style">Design Style *</Label>
                   <Input
                     id="design_style"
                     name="design_style"
                     placeholder="e.g., Luxury, Minimalist, Clean"
                     value={formData.design_style}
                     onChange={handleChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="image_mood">Image Mood</Label>
+                  <Label htmlFor="image_mood">Image Mood *</Label>
                   <Textarea
                     id="image_mood"
                     name="image_mood"
@@ -299,10 +314,11 @@ export default function CreateBusiness() {
                     value={formData.image_mood}
                     onChange={handleChange}
                     rows={2}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dos_donts">Do's and Don'ts</Label>
+                  <Label htmlFor="dos_donts">Do's and Don'ts *</Label>
                   <Textarea
                     id="dos_donts"
                     name="dos_donts"
@@ -310,16 +326,18 @@ export default function CreateBusiness() {
                     value={formData.dos_donts}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="design_checkpoints">Design Checkpoints</Label>
+                  <Label htmlFor="design_checkpoints">Design Checkpoints *</Label>
                   <Input
                     id="design_checkpoints"
                     name="design_checkpoints"
                     placeholder="e.g., Spacing, shadows, tone, typography alignment"
                     value={formData.design_checkpoints}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </CardContent>
@@ -334,7 +352,7 @@ export default function CreateBusiness() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="logo_urls">Logo URLs (one per line)</Label>
+                  <Label htmlFor="logo_urls">Logo URLs (one per line) *</Label>
                   <Textarea
                     id="logo_urls"
                     name="logo_urls"
@@ -342,10 +360,11 @@ export default function CreateBusiness() {
                     value={formData.logo_urls}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="reference_links">Reference Links (one per line)</Label>
+                  <Label htmlFor="reference_links">Reference Links (one per line) *</Label>
                   <Textarea
                     id="reference_links"
                     name="reference_links"
@@ -353,10 +372,11 @@ export default function CreateBusiness() {
                     value={formData.reference_links}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="asset_notes">Asset Notes</Label>
+                  <Label htmlFor="asset_notes">Asset Notes *</Label>
                   <Textarea
                     id="asset_notes"
                     name="asset_notes"
@@ -364,16 +384,18 @@ export default function CreateBusiness() {
                     value={formData.asset_notes}
                     onChange={handleChange}
                     rows={3}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="format_preferences">Format Preferences (comma-separated)</Label>
+                  <Label htmlFor="format_preferences">Format Preferences (comma-separated) *</Label>
                   <Input
                     id="format_preferences"
                     name="format_preferences"
                     placeholder="e.g., 1:1 square, 1080x1080"
                     value={formData.format_preferences}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </CardContent>

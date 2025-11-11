@@ -2,7 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Users, Mail, Phone, Globe, ExternalLink } from "lucide-react";
+import { Users, Mail, Phone, Globe, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Client {
   id: string;
@@ -42,10 +43,21 @@ const mockClients: Client[] = [
 ];
 
 export default function Clients() {
-  const handleClientClick = (clientName: string) => {
+  const navigate = useNavigate();
+
+  const handleUpdate = (e: React.MouseEvent, clientName: string) => {
+    e.stopPropagation();
     toast({
       title: "Coming Soon",
-      description: `Full details for ${clientName} will be available soon!`,
+      description: `Update functionality for ${clientName} will be available soon!`,
+    });
+  };
+
+  const handleRemove = (e: React.MouseEvent, clientName: string) => {
+    e.stopPropagation();
+    toast({
+      title: "Coming Soon",
+      description: `Remove functionality for ${clientName} will be available soon!`,
     });
   };
 
@@ -62,7 +74,7 @@ export default function Clients() {
               <p className="text-muted-foreground">Manage your business clients</p>
             </div>
           </div>
-          <Button onClick={() => toast({ title: "Coming Soon", description: "Add new client functionality coming soon!" })}>
+          <Button onClick={() => navigate("/create-business")}>
             Add New Client
           </Button>
         </div>
@@ -72,8 +84,7 @@ export default function Clients() {
         {mockClients.map((client) => (
           <Card 
             key={client.id} 
-            className="hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => handleClientClick(client.name)}
+            className="hover:shadow-lg transition-shadow"
           >
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -95,7 +106,7 @@ export default function Clients() {
                 <p className="text-sm text-muted-foreground line-clamp-2">{client.business_description}</p>
               </div>
 
-              <div className="pt-4 border-t space-y-2">
+              <div className="pt-4 border-t space-y-3">
                 <div className="flex items-center gap-2 text-sm">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground truncate">{client.mail}</span>
@@ -120,6 +131,27 @@ export default function Clients() {
                     Visit Website
                     <ExternalLink className="h-3 w-3" />
                   </a>
+                </div>
+                
+                <div className="flex gap-2 pt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={(e) => handleUpdate(e, client.name)}
+                  >
+                    <Pencil className="h-4 w-4 mr-1" />
+                    Update
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={(e) => handleRemove(e, client.name)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Remove
+                  </Button>
                 </div>
               </div>
             </CardContent>
