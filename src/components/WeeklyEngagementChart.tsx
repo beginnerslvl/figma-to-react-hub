@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { toast } from "@/hooks/use-toast";
 
 const data = [
   { name: "Mon", value: 45 },
@@ -12,8 +13,15 @@ const data = [
 ];
 
 export function WeeklyEngagementChart() {
+  const handleChartClick = () => {
+    toast({
+      title: "Coming Soon",
+      description: "Detailed analytics will be available soon!",
+    });
+  };
+
   return (
-    <Card>
+    <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={handleChartClick}>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Weekly Engagement</CardTitle>
       </CardHeader>

@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 const currentDate = new Date();
 const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
@@ -17,7 +19,23 @@ const events = [
 ];
 
 export function ContentCalendar() {
+  const [selectedDate, setSelectedDate] = useState<number>(today);
   const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  
+  const handleDateClick = (day: number) => {
+    setSelectedDate(day);
+    toast({
+      title: "Date Selected",
+      description: `You selected ${currentMonth} ${day}, ${currentYear}`,
+    });
+  };
+
+  const handleEventClick = (event: typeof events[0]) => {
+    toast({
+      title: event.title,
+      description: `Scheduled for ${event.time}`,
+    });
+  };
   
   return (
     <Card>
@@ -51,12 +69,16 @@ export function ContentCalendar() {
             {Array.from({ length: daysInMonth }).map((_, i) => {
               const day = i + 1;
               const isToday = day === today;
+              const isSelected = day === selectedDate;
               return (
                 <div
                   key={day}
-                  className={`text-xs py-1 rounded ${
-                    isToday
+                  onClick={() => handleDateClick(day)}
+                  className={`text-xs py-1 rounded cursor-pointer transition-colors ${
+                    isSelected
                       ? 'bg-primary text-primary-foreground font-semibold'
+                      : isToday
+                      ? 'bg-primary/20 text-primary font-medium'
                       : 'text-foreground hover:bg-muted'
                   }`}
                 >
@@ -70,7 +92,11 @@ export function ContentCalendar() {
         {/* Events */}
         <div className="space-y-2 pt-2 border-t">
           {events.map((event, i) => (
-            <div key={i} className="text-xs">
+            <div 
+              key={i} 
+              className="text-xs p-2 rounded hover:bg-muted cursor-pointer transition-colors"
+              onClick={() => handleEventClick(event)}
+            >
               <div className="font-medium">{event.title}</div>
               <div className="text-muted-foreground">{event.time}</div>
             </div>

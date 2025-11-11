@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DashboardCard } from "@/components/DashboardCard";
 import { WeeklyEngagementChart } from "@/components/WeeklyEngagementChart";
 import { ContentCalendar } from "@/components/ContentCalendar";
+import { toast } from "@/hooks/use-toast";
 import { 
   FileText, 
   Users, 
@@ -17,6 +18,17 @@ import {
 } from "lucide-react";
 
 const Index = () => {
+  const showComingSoon = (feature: string) => {
+    toast({
+      title: "Coming Soon",
+      description: `${feature} feature will be available soon!`,
+    });
+  };
+
+  const handleTaskToggle = (taskLabel: string) => {
+    showComingSoon(taskLabel);
+  };
+
   const jumpstartTasks = [
     { id: 1, label: "Create my business", completed: false },
     { id: 2, label: "Set up my brand", completed: false },
@@ -94,10 +106,15 @@ const Index = () => {
           <CardContent className="space-y-3">
             {jumpstartTasks.map((task) => (
               <div key={task.id} className="flex items-center space-x-2">
-                <Checkbox id={`task-${task.id}`} checked={task.completed} />
+                <Checkbox 
+                  id={`task-${task.id}`} 
+                  checked={task.completed}
+                  onCheckedChange={() => handleTaskToggle(task.label)}
+                />
                 <label
                   htmlFor={`task-${task.id}`}
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  onClick={() => handleTaskToggle(task.label)}
                 >
                   {task.label}
                 </label>
@@ -107,7 +124,7 @@ const Index = () => {
         </Card>
 
         {/* Efficient & Powerful Card */}
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden cursor-pointer hover:shadow-xl transition-shadow" onClick={() => showComingSoon("Efficient & Powerful dashboard")}>
           <CardHeader>
             <CardTitle className="text-white">Efficient & Powerful</CardTitle>
             <CardDescription className="text-blue-50">
@@ -115,14 +132,23 @@ const Index = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between text-blue-50">
-              <div>
-                <div className="text-sm">Posts</div>
-                <div className="text-2xl font-bold text-white">112K</div>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center justify-between text-blue-50 mb-4">
+                  <div>
+                    <div className="text-sm">Posts</div>
+                    <div className="text-2xl font-bold text-white">112K</div>
+                  </div>
+                  <div>
+                    <div className="text-sm">Socials</div>
+                    <div className="text-2xl font-bold text-white">24</div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <div className="text-sm">Socials</div>
-                <div className="text-2xl font-bold text-white">24</div>
+              <div className="ml-4 w-32 h-32 bg-blue-400/30 rounded-lg flex items-center justify-center">
+                <div className="text-blue-200 text-xs text-center">
+                  Image<br/>Placeholder
+                </div>
               </div>
             </div>
           </CardContent>
@@ -137,7 +163,7 @@ const Index = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Action Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => showComingSoon("Create Unlimited Creative Posts")}>
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded-lg">
@@ -153,7 +179,7 @@ const Index = () => {
               </CardHeader>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => showComingSoon("Request Live Demo")}>
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded-lg">
@@ -175,7 +201,7 @@ const Index = () => {
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {quickActions.map((action, i) => (
-                <Card key={i} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card key={i} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => showComingSoon(action.title)}>
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-primary/10 rounded-lg">
@@ -199,7 +225,7 @@ const Index = () => {
             <h2 className="text-xl font-semibold mb-4">Helpful Links</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {helpfulLinks.map((link, i) => (
-                <Card key={i} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card key={i} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => showComingSoon(link.title)}>
                   <CardHeader>
                     <div className="space-y-2">
                       <div className="p-2 bg-primary/10 rounded-lg w-fit">
