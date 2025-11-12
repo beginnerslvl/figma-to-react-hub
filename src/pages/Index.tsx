@@ -95,7 +95,7 @@ const Index = () => {
         {/* Jumpstart Progress */}
         {/* Combined Card */}
         <Card className="xl:col-span-2 p-4 sm:p-6 cursor-pointer hover:shadow-lg transition-shadow">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left – Jumpstart Progress */}
             <div>
               <CardHeader className="p-0">
@@ -124,7 +124,7 @@ const Index = () => {
             </div>
 
             {/* Right – Efficient & Powerful */}
-            <div className="flex flex-col justify-center items-center text-center gap-3 mt-6 md:mt-0">
+            <div className="flex flex-col justify-center items-center">
               <img
                 src={homePageAsset}
                 alt="Efficient & Powerful AI"
