@@ -29,7 +29,7 @@ const Index = () => {
   ];
 
   const completedPercentage = Math.round(
-    (jumpstartTasks.filter((task) => task.completed).length / jumpstartTasks.length) * 100
+    (jumpstartTasks.filter((task) => task.completed).length / jumpstartTasks.length) * 100,
   );
 
   const quickActions = [
@@ -125,15 +125,10 @@ const Index = () => {
 
             {/* Right – Efficient & Powerful */}
             <div className="flex flex-col justify-center items-center text-center gap-3">
-              <h2 className="text-2xl font-semibold">Efficient & Powerful</h2>
-              <p className="text-sm text-muted-foreground">
-                Save time and money with high-quality AI-generated content.
-              </p>
-
               <img
                 src={homePageAsset}
                 alt="Efficient & Powerful AI"
-                className="w-full h-auto max-w-[260px] object-contain"
+                className="w-full h-auto max-w-[1260px] object-contain"
               />
             </div>
           </div>
