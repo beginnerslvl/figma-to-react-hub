@@ -116,19 +116,21 @@ export default function Clients() {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-4 sm:p-6">
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
               <Users className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Clients</h1>
-              <p className="text-muted-foreground">Manage your business clients</p>
+              <h1 className="text-2xl sm:text-3xl font-bold">Clients</h1>
+              <p className="text-sm text-muted-foreground">Manage your business clients</p>
             </div>
           </div>
-          <Button onClick={() => navigate("/create-business")}>Add New Client</Button>
+          <Button onClick={() => navigate("/create-business")} className="w-full sm:w-auto">
+            Add New Client
+          </Button>
         </div>
       </div>
 

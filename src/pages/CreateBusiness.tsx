@@ -122,20 +122,20 @@ export default function CreateBusiness() {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-5xl">
-      <div className="mb-6">
+    <div className="container mx-auto p-4 sm:p-6 max-w-5xl">
+      <div className="mb-4 sm:mb-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 bg-primary/10 rounded-lg">
             <Briefcase className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Create New Business</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Create New Business</h1>
         </div>
-        <p className="text-muted-foreground">Fill in the details to create a new business profile</p>
+        <p className="text-sm text-muted-foreground">Fill in the details to create a new business profile</p>
       </div>
 
       <form onSubmit={handleSubmit}>
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2">
             <TabsTrigger value="basic">Basic</TabsTrigger>
             <TabsTrigger value="writing">Writing</TabsTrigger>
             <TabsTrigger value="contact">Contact</TabsTrigger>
@@ -476,11 +476,17 @@ export default function CreateBusiness() {
           </TabsContent>
         </Tabs>
 
-        <div className="mt-6 flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate("/clients")} disabled={isLoading}>
+        <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => navigate("/clients")} 
+            disabled={isLoading}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Business
           </Button>

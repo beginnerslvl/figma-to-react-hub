@@ -193,7 +193,7 @@ const Calendar = () => {
         {/* Calendar Grid */}
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <div className="min-w-[800px]">
+            <div className="min-w-[800px] lg:min-w-0">
               {/* Days Header */}
               <div className="grid grid-cols-8 border-b bg-muted/50">
                 <div className="p-2 text-sm font-medium border-r"></div>
