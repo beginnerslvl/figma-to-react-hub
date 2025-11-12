@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, RefreshCw, Check, Sparkles, Trash2, CheckCircle } from "lucide-react";
+import { apiFetch } from "@/lib/api";
 
 interface Client {
   id: string;
@@ -79,7 +80,7 @@ export default function Posts() {
 
   // Fetch clients
   useEffect(() => {
-    fetch("https://5d3221f9a372.ngrok-free.app/all-clients")
+    apiFetch("/all-clients")
       .then(res => res.json())
       .then(data => {
         if (data.clients) {
@@ -91,7 +92,7 @@ export default function Posts() {
 
   // Fetch categories
   useEffect(() => {
-    fetch("https://1c582916dab5.ngrok-free.app/get-all-categories")
+    apiFetch("/get-all-categories")
       .then(res => res.json())
       .then(data => {
         if (data.categories) {
@@ -103,7 +104,7 @@ export default function Posts() {
 
   // Fetch topics
   useEffect(() => {
-    fetch("https://1c582916dab5.ngrok-free.app/get-all-topics")
+    apiFetch("/get-all-topics")
       .then(res => res.json())
       .then(data => {
         if (data.topics) {

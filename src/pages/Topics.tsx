@@ -17,8 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
-const API_BASE = "https://1c582916dab5.ngrok-free.app";
+import { apiFetch } from "@/lib/api";
 
 interface Category {
   category_id: string;
@@ -34,23 +33,22 @@ interface Topic {
 
 // API functions
 const fetchCategories = async (): Promise<Category[]> => {
-  const response = await fetch(`${API_BASE}/get-all-categories`);
+  const response = await apiFetch("/get-all-categories");
   if (!response.ok) throw new Error("Failed to fetch categories");
   const data = await response.json();
   return data.categories;
 };
 
 const fetchTopics = async (): Promise<Topic[]> => {
-  const response = await fetch(`${API_BASE}/get-all-topics`);
+  const response = await apiFetch("/get-all-topics");
   if (!response.ok) throw new Error("Failed to fetch topics");
   const data = await response.json();
   return data.topics;
 };
 
 const createCategory = async (categoryName: string) => {
-  const response = await fetch(`${API_BASE}/create-category`, {
+  const response = await apiFetch("/create-category", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ category_name: categoryName }),
   });
   if (!response.ok) throw new Error("Failed to create category");
@@ -58,9 +56,8 @@ const createCategory = async (categoryName: string) => {
 };
 
 const createTopic = async (data: { category_id: string; title: string; description: string }) => {
-  const response = await fetch(`${API_BASE}/create-topic`, {
+  const response = await apiFetch("/create-topic", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!response.ok) throw new Error("Failed to create topic");
@@ -68,7 +65,7 @@ const createTopic = async (data: { category_id: string; title: string; descripti
 };
 
 const deleteTopic = async (topicId: string) => {
-  const response = await fetch(`${API_BASE}/remove-topic?topic_id=${topicId}`, {
+  const response = await apiFetch(`/remove-topic?topic_id=${topicId}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete topic");

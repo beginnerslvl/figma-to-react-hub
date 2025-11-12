@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Users, Mail, Phone, Globe, ExternalLink, Pencil, Trash2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "@/lib/api";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +43,7 @@ export default function Clients() {
   const fetchClients = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://f364b1684af6.ngrok-free.app/clients/all-clients");
+      const response = await apiFetch("/clients/all-clients");
       const data = await response.json();
 
       if (response.ok && data.clients) {
@@ -83,8 +84,8 @@ export default function Clients() {
 
     try {
       setIsDeleting(true);
-      const response = await fetch(
-        `https://5d3221f9a372.ngrok-free.app/remove?client_id=${clientToDelete.id}&delete_all_data=true`,
+      const response = await apiFetch(
+        `/remove?client_id=${clientToDelete.id}&delete_all_data=true`,
         { method: "DELETE" },
       );
 

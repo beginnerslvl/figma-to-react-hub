@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { Briefcase, Loader2 } from "lucide-react";
+import { apiFetch } from "@/lib/api";
 
 export default function CreateBusiness() {
   const navigate = useNavigate();
@@ -83,11 +84,8 @@ export default function CreateBusiness() {
           .filter((s) => s),
       };
 
-      const response = await fetch("https://dc5044aa7aa1.ngrok-free.app/clients/create", {
+      const response = await apiFetch("/clients/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(apiData),
       });
 
