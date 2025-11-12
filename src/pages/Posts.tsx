@@ -212,36 +212,91 @@ export default function Posts() {
     });
   };
 
-  const finalizePost = () => {
-    if (post) {
+  const finalizePost = async () => {
+    if (!post) return;
+
+    try {
+      await apiFetch("/posts/finalize-post", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: post.client_id,
+          post_ids: [post.post_id],
+        }),
+      });
+
       setPost({ ...post, finalized: "True" });
       setSavedPosts(savedPosts.map(p => 
         p.post_id === post.post_id ? { ...p, finalized: "True" } : p
       ));
+      
       toast({
         title: "Post Finalized",
         description: "Post finalized and sent for review.",
       });
+    } catch (err) {
+      console.error("Failed to finalize post:", err);
+      toast({
+        title: "Finalization Failed",
+        description: "Failed to finalize post. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
-  const finalizeSavedPost = (postId: string) => {
-    setSavedPosts(savedPosts.map(p => 
-      p.post_id === postId ? { ...p, finalized: "True" } : p
-    ));
-    toast({
-      title: "Post Finalized",
-      description: "Post finalized and sent for review.",
-    });
+  const finalizeSavedPost = async (postId: string) => {
+    const postToFinalize = savedPosts.find(p => p.post_id === postId);
+    if (!postToFinalize) return;
+
+    try {
+      await apiFetch("/posts/finalize-post", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: postToFinalize.client_id,
+          post_ids: [postId],
+        }),
+      });
+
+      setSavedPosts(savedPosts.map(p => 
+        p.post_id === postId ? { ...p, finalized: "True" } : p
+      ));
+      
+      toast({
+        title: "Post Finalized",
+        description: "Post finalized and sent for review.",
+      });
+    } catch (err) {
+      console.error("Failed to finalize post:", err);
+      toast({
+        title: "Finalization Failed",
+        description: "Failed to finalize post. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const deleteSavedPost = (postId: string) => {
-    setSavedPosts(savedPosts.filter(p => p.post_id !== postId));
-    toast({
-      title: "Post Deleted",
-      description: "Post has been removed.",
-      variant: "destructive",
-    });
+  const deleteSavedPost = async (postId: string) => {
+    try {
+      await apiFetch("/posts/remove", {
+        method: "DELETE",
+        body: JSON.stringify({
+          post_id: postId,
+        }),
+      });
+
+      setSavedPosts(savedPosts.filter(p => p.post_id !== postId));
+      
+      toast({
+        title: "Post Deleted",
+        description: "Post has been removed.",
+      });
+    } catch (err) {
+      console.error("Failed to delete post:", err);
+      toast({
+        title: "Deletion Failed",
+        description: "Failed to delete post. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
