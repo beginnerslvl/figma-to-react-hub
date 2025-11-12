@@ -42,7 +42,7 @@ export default function Clients() {
   const fetchClients = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://dc5044aa7aa1.ngrok-free.app/clients/all-clients");
+      const response = await fetch("https://f364b1684af6.ngrok-free.app/clients/all-clients");
       const data = await response.json();
 
       if (response.ok && data.clients) {
