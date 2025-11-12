@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import CreateBusiness from "./pages/CreateBusiness";
 import Clients from "./pages/Clients";
 import Topics from "./pages/Topics";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,7 +33,7 @@ const App = () => (
                 <Route path="/topics" element={<Topics />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/calendar" element={<Index />} />
-                <Route path="/analytics" element={<Index />} />
+                <Route path="/analytics" element={<Analytics />} />
                 <Route path="/create-business" element={<CreateBusiness />} />
                 <Route path="/connect-social" element={<Index />} />
                 <Route path="/help" element={<Index />} />
