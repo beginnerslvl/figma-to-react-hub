@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Users, Mail, Phone, Globe, ExternalLink, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Users, Mail, Phone, Globe, ExternalLink, Trash2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "@/lib/api";
 import {
@@ -66,14 +66,6 @@ export default function Clients() {
     }
   };
 
-  const handleUpdate = (e: React.MouseEvent, clientName: string) => {
-    e.stopPropagation();
-    toast({
-      title: "Coming Soon",
-      description: `Update functionality for ${clientName} will be available soon!`,
-    });
-  };
-
   const handleRemove = (e: React.MouseEvent, client: Client) => {
     e.stopPropagation();
     setClientToDelete(client);
@@ -85,7 +77,7 @@ export default function Clients() {
     try {
       setIsDeleting(true);
       const response = await apiFetch(
-        `/remove?client_id=${clientToDelete.id}&delete_all_data=true`,
+        `/clients/remove?client_id=${clientToDelete.id}&delete_all_data=true`,
         { method: "DELETE" },
       );
 
@@ -146,43 +138,70 @@ export default function Clients() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {clients.map((client) => (
-            <Card key={client.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-start justify-between">
+            <Card 
+              key={client.id} 
+              className="group relative overflow-hidden border-2 hover:border-primary/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80"
+            >
+              <button
+                onClick={(e) => handleRemove(e, client)}
+                className="absolute top-3 right-3 z-10 p-2 rounded-full bg-destructive/10 hover:bg-destructive hover:text-destructive-foreground transition-all duration-200 opacity-0 group-hover:opacity-100"
+                aria-label="Delete client"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+              
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between pr-8">
                   <div className="flex-1">
-                    <CardTitle className="text-xl mb-1">{client.name}</CardTitle>
-                    <CardDescription className="text-sm">ID: {client.id}</CardDescription>
+                    <CardTitle className="text-xl mb-2 font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                      {client.name}
+                    </CardTitle>
+                    <CardDescription className="text-xs font-mono">ID: {client.id}</CardDescription>
                   </div>
-                  <Badge variant="secondary">{client.focus}</Badge>
                 </div>
+                <Badge 
+                  variant="secondary" 
+                  className="w-fit mt-2 bg-primary/10 text-primary border-primary/20"
+                >
+                  {client.focus}
+                </Badge>
               </CardHeader>
+              
               <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium mb-1">Services</p>
-                  <p className="text-sm text-muted-foreground">{client.services}</p>
+                <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
+                  <p className="text-xs font-semibold mb-1.5 text-primary">Services</p>
+                  <p className="text-sm text-foreground/90">{client.services}</p>
                 </div>
 
-                <div>
-                  <p className="text-sm font-medium mb-1">Description</p>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{client.business_description}</p>
+                <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
+                  <p className="text-xs font-semibold mb-1.5 text-primary">Description</p>
+                  <p className="text-sm text-foreground/90 line-clamp-2">{client.business_description}</p>
                 </div>
 
-                <div className="pt-4 border-t space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground truncate">{client.mail}</span>
+                <div className="pt-3 border-t border-border/50 space-y-3">
+                  <div className="flex items-center gap-3 text-sm group/item hover:text-primary transition-colors">
+                    <div className="p-1.5 rounded-md bg-primary/10">
+                      <Mail className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <span className="truncate text-xs">{client.mail}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">{client.number}</span>
+                  
+                  <div className="flex items-center gap-3 text-sm group/item hover:text-primary transition-colors">
+                    <div className="p-1.5 rounded-md bg-primary/10">
+                      <Phone className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <span className="text-xs">{client.number}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Globe className="h-4 w-4 text-muted-foreground" />
+                  
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="p-1.5 rounded-md bg-primary/10">
+                      <Globe className="h-3.5 w-3.5 text-primary" />
+                    </div>
                     <a
                       href={client.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary hover:underline flex items-center gap-1"
+                      className="text-primary hover:underline flex items-center gap-1.5 text-xs font-medium"
                       onClick={(e) => {
                         e.stopPropagation();
                         toast({ title: "Coming Soon", description: "Website link functionality coming soon!" });
@@ -192,22 +211,6 @@ export default function Clients() {
                       Visit Website
                       <ExternalLink className="h-3 w-3" />
                     </a>
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={(e) => handleUpdate(e, client.name)}
-                    >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Update
-                    </Button>
-                    <Button variant="destructive" size="sm" className="flex-1" onClick={(e) => handleRemove(e, client)}>
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Remove
-                    </Button>
                   </div>
                 </div>
               </CardContent>
