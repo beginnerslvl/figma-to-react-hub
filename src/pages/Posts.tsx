@@ -14,26 +14,25 @@ interface Client {
 }
 
 interface Category {
-  id: string;
-  name: string;
+  category_id: string;
+  category_name: string;
 }
 
 interface Topic {
-  id: string;
-  name: string;
+  topic_id: string;
+  title: string;
 }
 
 interface Post {
-  image: string;
-  caption: string;
-  isFinalized: boolean;
-}
-
-interface SavedPost {
   post_id: string;
+  client_id: string;
+  category_id: string;
+  topics: string[];
   caption: string;
+  hashtags: string;
   image_url: string;
-  isFinalized: boolean;
+  visual_style: string | null;
+  finalized: string;
 }
 
 export default function Posts() {
@@ -52,35 +51,15 @@ export default function Posts() {
   
   // Post state
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isRegenerating, setIsRegenerating] = useState(false);
   const [post, setPost] = useState<Post | null>(null);
   const [caption, setCaption] = useState("");
   
   // Saved posts feed
-  const [savedPosts, setSavedPosts] = useState<SavedPost[]>([
-    {
-      post_id: "POST-20251104-01",
-      caption: "Transform your smile with precision and confidence ✨\n\n#DentalCare #SmileTransformation #HealthySmile",
-      image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuXvyEn3bYGdR9opBEj19y5Ro9VrOzM6gXwQ&s",
-      isFinalized: false,
-    },
-    {
-      post_id: "POST-20251104-02",
-      caption: "Your journey to a confident smile starts here 🦷\n\n#DentalExcellence #ConfidentSmile #DentalHealth",
-      image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuXvyEn3bYGdR9opBEj19y5Ro9VrOzM6gXwQ&s",
-      isFinalized: true,
-    },
-    {
-      post_id: "POST-20251104-03",
-      caption: "Experience the difference that expertise makes 💎\n\n#ProfessionalCare #DentalExperts #SmileMakeover",
-      image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuXvyEn3bYGdR9opBEj19y5Ro9VrOzM6gXwQ&s",
-      isFinalized: false,
-    },
-  ]);
+  const [savedPosts, setSavedPosts] = useState<Post[]>([]);
 
   // Fetch clients
   useEffect(() => {
-    apiFetch("/all-clients")
+    apiFetch("/clients/all-clients")
       .then(res => res.json())
       .then(data => {
         if (data.clients) {
@@ -88,6 +67,18 @@ export default function Posts() {
         }
       })
       .catch(err => console.error("Failed to fetch clients:", err));
+  }, []);
+
+  // Fetch saved posts
+  useEffect(() => {
+    apiFetch("/posts/get-all-posts")
+      .then(res => res.json())
+      .then(data => {
+        if (data.posts) {
+          setSavedPosts(data.posts);
+        }
+      })
+      .catch(err => console.error("Failed to fetch posts:", err));
   }, []);
 
   // Fetch categories
@@ -114,7 +105,7 @@ export default function Posts() {
       .catch(err => console.error("Failed to fetch topics:", err));
   }, []);
 
-  const generatePost = () => {
+  const generatePost = async () => {
     if (!selectedClient || !selectedCategory || !selectedTopic || !selectedStyle) {
       toast({
         title: "Missing Information",
@@ -127,32 +118,90 @@ export default function Posts() {
     setIsGenerating(true);
     setPost(null);
 
-    // Simulate API call
-    setTimeout(() => {
-      const newPost = {
-        image: "https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?w=600&h=600&fit=crop",
-        caption: "Transform your smile with our state-of-the-art dental care. ✨\n\nExperience the difference that expertise and compassion make. Book your consultation today!\n\n#DentalCare #SmileTransformation #HealthySmile",
-        isFinalized: false,
-      };
-      setPost(newPost);
-      setCaption(newPost.caption);
+    try {
+      const response = await apiFetch("/posts/create", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: selectedClient,
+          category_id: selectedCategory,
+          topics: [selectedTopic],
+          number_of_posts: 1,
+          visual_style: selectedStyle,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.posts && data.posts.length > 0) {
+        const newPost = data.posts[0];
+        setPost(newPost);
+        setCaption(newPost.caption + (newPost.hashtags ? `\n\n${newPost.hashtags}` : ""));
+        
+        // Refresh saved posts
+        const postsResponse = await apiFetch("/posts/get-all-posts");
+        const postsData = await postsResponse.json();
+        if (postsData.posts) {
+          setSavedPosts(postsData.posts);
+        }
+        
+        toast({
+          title: "Post Generated",
+          description: "Your post has been created successfully.",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to generate post:", err);
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
-  const regeneratePost = () => {
-    setIsRegenerating(true);
+  const regeneratePost = async () => {
+    if (!selectedClient || !selectedCategory || !selectedTopic || !selectedStyle) return;
+    
+    setIsGenerating(true);
 
-    setTimeout(() => {
-      const newPost = {
-        image: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=600&h=600&fit=crop",
-        caption: "Your journey to a confident smile starts here. 🦷\n\nDiscover personalized dental solutions tailored just for you. Let's create something beautiful together!\n\n#DentalExcellence #ConfidentSmile #DentalHealth",
-        isFinalized: false,
-      };
-      setPost(newPost);
-      setCaption(newPost.caption);
-      setIsRegenerating(false);
-    }, 1500);
+    try {
+      const response = await apiFetch("/posts/create", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: selectedClient,
+          category_id: selectedCategory,
+          topics: [selectedTopic],
+          number_of_posts: 1,
+          visual_style: selectedStyle,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.posts && data.posts.length > 0) {
+        const newPost = data.posts[0];
+        setPost(newPost);
+        setCaption(newPost.caption + (newPost.hashtags ? `\n\n${newPost.hashtags}` : ""));
+        
+        // Refresh saved posts
+        const postsResponse = await apiFetch("/posts/get-all-posts");
+        const postsData = await postsResponse.json();
+        if (postsData.posts) {
+          setSavedPosts(postsData.posts);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to regenerate post:", err);
+      toast({
+        title: "Regeneration Failed",
+        description: "Failed to regenerate post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const copyCaption = () => {
@@ -165,7 +214,10 @@ export default function Posts() {
 
   const finalizePost = () => {
     if (post) {
-      setPost({ ...post, isFinalized: true });
+      setPost({ ...post, finalized: "True" });
+      setSavedPosts(savedPosts.map(p => 
+        p.post_id === post.post_id ? { ...p, finalized: "True" } : p
+      ));
       toast({
         title: "Post Finalized",
         description: "Post finalized and sent for review.",
@@ -175,7 +227,7 @@ export default function Posts() {
 
   const finalizeSavedPost = (postId: string) => {
     setSavedPosts(savedPosts.map(p => 
-      p.post_id === postId ? { ...p, isFinalized: true } : p
+      p.post_id === postId ? { ...p, finalized: "True" } : p
     ));
     toast({
       title: "Post Finalized",
@@ -222,8 +274,8 @@ export default function Posts() {
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
+                  <SelectItem key={category.category_id} value={category.category_id}>
+                    {category.category_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -235,8 +287,8 @@ export default function Posts() {
               </SelectTrigger>
               <SelectContent>
                 {topics.map((topic) => (
-                  <SelectItem key={topic.id} value={topic.id}>
-                    {topic.name}
+                  <SelectItem key={topic.topic_id} value={topic.topic_id}>
+                    {topic.title}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -285,32 +337,28 @@ export default function Posts() {
         {post && !isGenerating && (
           <Card 
             className={`animate-fade-in transition-all duration-500 ${
-              post.isFinalized ? "ring-2 ring-green-500/50 shadow-lg shadow-green-500/20" : ""
+              post.finalized === "True" ? "ring-2 ring-green-500/50 shadow-lg shadow-green-500/20" : ""
             }`}
           >
             <CardContent className="p-6 relative">
-              {post.isFinalized && (
+              {post.finalized === "True" && (
                 <div className="absolute top-4 right-4 bg-green-500 text-white rounded-full p-2 animate-scale-in">
                   <Check className="h-5 w-5" />
                 </div>
               )}
 
-              {isRegenerating ? (
-                <Skeleton className="w-full aspect-square mb-4" />
-              ) : (
-                <img
-                  src={post.image}
-                  alt="Generated post"
-                  className="w-full aspect-square object-cover rounded-lg mb-4 animate-fade-in"
-                />
-              )}
+              <img
+                src={post.image_url}
+                alt="Generated post"
+                className="w-full aspect-square object-cover rounded-lg mb-4 animate-fade-in"
+              />
 
               <Textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="Caption will appear here..."
                 className="min-h-[120px] mb-4 resize-none"
-                disabled={post.isFinalized}
+                disabled={post.finalized === "True"}
               />
 
               <div className="flex gap-2">
@@ -318,7 +366,7 @@ export default function Posts() {
                   variant="outline"
                   onClick={copyCaption}
                   className="flex-1"
-                  disabled={post.isFinalized}
+                  disabled={post.finalized === "True"}
                 >
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Caption
@@ -328,16 +376,16 @@ export default function Posts() {
                   variant="outline"
                   onClick={regeneratePost}
                   className="flex-1"
-                  disabled={isRegenerating || post.isFinalized}
+                  disabled={isGenerating || post.finalized === "True"}
                 >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${isRegenerating ? "animate-spin" : ""}`} />
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isGenerating ? "animate-spin" : ""}`} />
                   Regenerate
                 </Button>
 
                 <Button
                   onClick={finalizePost}
                   className="flex-1"
-                  disabled={post.isFinalized}
+                  disabled={post.finalized === "True"}
                 >
                   <Check className="h-4 w-4 mr-2" />
                   Finalize Post
@@ -366,7 +414,7 @@ export default function Posts() {
               <Card 
                 key={savedPost.post_id}
                 className={`animate-fade-in transition-all duration-300 hover:shadow-lg relative ${
-                  savedPost.isFinalized ? "ring-2 ring-green-500/30" : ""
+                  savedPost.finalized === "True" ? "ring-2 ring-green-500/30" : ""
                 }`}
               >
                 <CardContent className="p-0">
@@ -377,7 +425,7 @@ export default function Posts() {
                       variant="secondary"
                       className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
                       onClick={() => finalizeSavedPost(savedPost.post_id)}
-                      disabled={savedPost.isFinalized}
+                      disabled={savedPost.finalized === "True"}
                     >
                       <CheckCircle className="h-4 w-4" />
                     </Button>
@@ -392,7 +440,7 @@ export default function Posts() {
                   </div>
 
                   {/* Finalized Badge */}
-                  {savedPost.isFinalized && (
+                  {savedPost.finalized === "True" && (
                     <div className="absolute top-3 left-3 z-10 animate-scale-in">
                       <div className="bg-green-500 text-white rounded-full p-1.5 shadow-lg">
                         <Check className="h-4 w-4" />
