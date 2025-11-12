@@ -6,6 +6,7 @@ import { WeeklyEngagementChart } from "@/components/WeeklyEngagementChart";
 import { ContentCalendar } from "@/components/ContentCalendar";
 import { toast } from "@/hooks/use-toast";
 import { FileText, Users, BarChart, Share2, MessageSquare, Youtube, Zap, BookOpen, LifeBuoy } from "lucide-react";
+import homePageAsset from "@/assets/home_page_asset.png";
 
 const Index = () => {
   const showComingSoon = (feature: string) => {
@@ -115,36 +116,22 @@ const Index = () => {
 
         {/* Efficient & Powerful Card */}
         <Card
-          className="bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+          className="bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden cursor-pointer hover:shadow-xl transition-shadow relative"
           onClick={() => showComingSoon("Efficient & Powerful dashboard")}
         >
-          <CardHeader>
-            <CardTitle className="text-white">Efficient & Powerful</CardTitle>
+          <CardHeader className="relative z-10">
+            <CardTitle className="text-white text-2xl">Efficient & Powerful</CardTitle>
             <CardDescription className="text-blue-50">
-              One tool to manage, publish and schedule your content effortlessly and efficiently
+              Save time and money with high-quality AI-generated content.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="flex items-center justify-between text-blue-50 mb-4">
-                  <div>
-                    <div className="text-sm">Posts</div>
-                    <div className="text-2xl font-bold text-white">112K</div>
-                  </div>
-                  <div>
-                    <div className="text-sm">Socials</div>
-                    <div className="text-2xl font-bold text-white">24</div>
-                  </div>
-                </div>
-              </div>
-              <div className="ml-4 w-32 h-32 bg-blue-400/30 rounded-lg flex items-center justify-center">
-                <div className="text-blue-200 text-xs text-center">
-                  Image
-                  <br />
-                  Placeholder
-                </div>
-              </div>
+          <CardContent className="relative">
+            <div className="flex items-center justify-center">
+              <img 
+                src={homePageAsset} 
+                alt="Efficient & Powerful AI" 
+                className="w-full h-auto max-w-[280px] object-contain"
+              />
             </div>
           </CardContent>
         </Card>
