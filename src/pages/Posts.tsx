@@ -225,9 +225,11 @@ export default function Posts() {
       });
 
       setPost({ ...post, finalized: "True" });
-      setSavedPosts(savedPosts.map(p => 
-        p.post_id === post.post_id ? { ...p, finalized: "True" } : p
-      ));
+      setSavedPosts(prevPosts => 
+        prevPosts.map(p => 
+          p.post_id === post.post_id ? { ...p, finalized: "True" } : p
+        )
+      );
       
       toast({
         title: "Post Finalized",
@@ -256,9 +258,11 @@ export default function Posts() {
         }),
       });
 
-      setSavedPosts(savedPosts.map(p => 
-        p.post_id === postId ? { ...p, finalized: "True" } : p
-      ));
+      setSavedPosts(prevPosts => 
+        prevPosts.map(p => 
+          p.post_id === postId ? { ...p, finalized: "True" } : p
+        )
+      );
       
       toast({
         title: "Post Finalized",
@@ -283,7 +287,7 @@ export default function Posts() {
         }),
       });
 
-      setSavedPosts(savedPosts.filter(p => p.post_id !== postId));
+      setSavedPosts(prevPosts => prevPosts.filter(p => p.post_id !== postId));
       
       toast({
         title: "Post Deleted",
