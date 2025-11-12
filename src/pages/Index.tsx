@@ -87,45 +87,51 @@ const Index = () => {
       </div>
 
       {/* Top Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Combined Jumpstart Progress & Efficient Card */}
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row gap-6 items-start">
-              {/* Left: Jumpstart Progress */}
-              <div className="flex-1 bg-white rounded-lg p-4 shadow-lg">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-foreground">Jumpstart Progress</h3>
-                  <p className="text-sm text-muted-foreground">14%</p>
-                </div>
-                <div className="space-y-3">
-                  {jumpstartTasks.map((task) => (
-                    <div key={task.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`task-${task.id}`}
-                        checked={task.completed}
-                        onCheckedChange={() => handleTaskToggle(task.label)}
-                      />
-                      <label
-                        htmlFor={`task-${task.id}`}
-                        className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-foreground"
-                        onClick={() => handleTaskToggle(task.label)}
-                      >
-                        {task.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right: Efficient & Powerful Image */}
-              <div className="flex flex-col items-center justify-center flex-1">
-                <img 
-                  src={homePageAsset} 
-                  alt="Efficient & Powerful AI" 
-                  className="w-full h-auto max-w-[280px] object-contain"
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Jumpstart Progress */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Jumpstart Progress</CardTitle>
+            <CardDescription>50% complete</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {jumpstartTasks.map((task) => (
+              <div key={task.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`task-${task.id}`}
+                  checked={task.completed}
+                  onCheckedChange={() => handleTaskToggle(task.label)}
                 />
+                <label
+                  htmlFor={`task-${task.id}`}
+                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  onClick={() => handleTaskToggle(task.label)}
+                >
+                  {task.label}
+                </label>
               </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Efficient & Powerful Card */}
+        <Card
+          className="bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden cursor-pointer hover:shadow-xl transition-shadow relative"
+          onClick={() => showComingSoon("Efficient & Powerful dashboard")}
+        >
+          <CardHeader className="relative z-10">
+            <CardTitle className="text-white text-2xl">Efficient & Powerful</CardTitle>
+            <CardDescription className="text-blue-50">
+              Save time and money with high-quality AI-generated content.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="relative">
+            <div className="flex items-center justify-center">
+              <img 
+                src={homePageAsset} 
+                alt="Efficient & Powerful AI" 
+                className="w-full h-auto max-w-[280px] object-contain"
+              />
             </div>
           </CardContent>
         </Card>
