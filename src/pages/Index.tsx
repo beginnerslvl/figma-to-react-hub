@@ -28,6 +28,10 @@ const Index = () => {
     { id: 5, label: "Publish a post", completed: false },
   ];
 
+  const completedPercentage = Math.round(
+    (jumpstartTasks.filter((task) => task.completed).length / jumpstartTasks.length) * 100
+  );
+
   const quickActions = [
     {
       icon: FileText,
