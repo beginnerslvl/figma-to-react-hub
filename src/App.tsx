@@ -11,6 +11,7 @@ import Clients from "./pages/Clients";
 import Topics from "./pages/Topics";
 import Analytics from "./pages/Analytics";
 import Calendar from "./pages/Calendar";
+import ApiTest from "./pages/ApiTest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
                 <Route path="/create-business" element={<CreateBusiness />} />
                 <Route path="/connect-social" element={<Index />} />
                 <Route path="/help" element={<Index />} />
+                <Route path="/api-test" element={<ApiTest />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
