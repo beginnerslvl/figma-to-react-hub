@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, RefreshCw, Check, Sparkles } from "lucide-react";
+import { Copy, RefreshCw, Check, Sparkles, Trash2, CheckCircle } from "lucide-react";
 
 interface Client {
   id: string;
@@ -28,6 +28,13 @@ interface Post {
   isFinalized: boolean;
 }
 
+interface SavedPost {
+  post_id: string;
+  caption: string;
+  image_url: string;
+  isFinalized: boolean;
+}
+
 export default function Posts() {
   const { toast } = useToast();
   
@@ -47,6 +54,28 @@ export default function Posts() {
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [post, setPost] = useState<Post | null>(null);
   const [caption, setCaption] = useState("");
+  
+  // Saved posts feed
+  const [savedPosts, setSavedPosts] = useState<SavedPost[]>([
+    {
+      post_id: "POST-20251104-01",
+      caption: "Transform your smile with precision and confidence ✨\n\n#DentalCare #SmileTransformation #HealthySmile",
+      image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuXvyEn3bYGdR9opBEj19y5Ro9VrOzM6gXwQ&s",
+      isFinalized: false,
+    },
+    {
+      post_id: "POST-20251104-02",
+      caption: "Your journey to a confident smile starts here 🦷\n\n#DentalExcellence #ConfidentSmile #DentalHealth",
+      image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuXvyEn3bYGdR9opBEj19y5Ro9VrOzM6gXwQ&s",
+      isFinalized: true,
+    },
+    {
+      post_id: "POST-20251104-03",
+      caption: "Experience the difference that expertise makes 💎\n\n#ProfessionalCare #DentalExperts #SmileMakeover",
+      image_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuXvyEn3bYGdR9opBEj19y5Ro9VrOzM6gXwQ&s",
+      isFinalized: false,
+    },
+  ]);
 
   // Fetch clients
   useEffect(() => {
@@ -141,6 +170,25 @@ export default function Posts() {
         description: "Post finalized and sent for review.",
       });
     }
+  };
+
+  const finalizeSavedPost = (postId: string) => {
+    setSavedPosts(savedPosts.map(p => 
+      p.post_id === postId ? { ...p, isFinalized: true } : p
+    ));
+    toast({
+      title: "Post Finalized",
+      description: "Post finalized and sent for review.",
+    });
+  };
+
+  const deleteSavedPost = (postId: string) => {
+    setSavedPosts(savedPosts.filter(p => p.post_id !== postId));
+    toast({
+      title: "Post Deleted",
+      description: "Post has been removed.",
+      variant: "destructive",
+    });
   };
 
   return (
@@ -307,6 +355,71 @@ export default function Posts() {
           </Card>
         )}
       </div>
+
+      {/* Saved Posts Feed */}
+      {savedPosts.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold mb-6">Your Posts</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {savedPosts.map((savedPost) => (
+              <Card 
+                key={savedPost.post_id}
+                className={`animate-fade-in transition-all duration-300 hover:shadow-lg relative ${
+                  savedPost.isFinalized ? "ring-2 ring-green-500/30" : ""
+                }`}
+              >
+                <CardContent className="p-0">
+                  {/* Action Buttons */}
+                  <div className="absolute top-3 right-3 flex gap-2 z-10">
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+                      onClick={() => finalizeSavedPost(savedPost.post_id)}
+                      disabled={savedPost.isFinalized}
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => deleteSavedPost(savedPost.post_id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Finalized Badge */}
+                  {savedPost.isFinalized && (
+                    <div className="absolute top-3 left-3 z-10 animate-scale-in">
+                      <div className="bg-green-500 text-white rounded-full p-1.5 shadow-lg">
+                        <Check className="h-4 w-4" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Post Image */}
+                  <div className="relative aspect-square overflow-hidden">
+                    <img
+                      src={savedPost.image_url}
+                      alt={`Post ${savedPost.post_id}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Caption */}
+                  <div className="p-4">
+                    <p className="text-sm text-foreground whitespace-pre-line line-clamp-4">
+                      {savedPost.caption}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
