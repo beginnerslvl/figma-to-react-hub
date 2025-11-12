@@ -12,14 +12,17 @@ interface Client {
   id: string;
   name: string;
 }
+
 interface Category {
   category_id: string;
   category_name: string;
 }
+
 interface Topic {
   topic_id: string;
   title: string;
 }
+
 interface Post {
   post_id: string;
   client_id: string;
@@ -58,7 +61,11 @@ export default function Posts() {
   useEffect(() => {
     apiFetch("/clients/all-clients")
       .then((res) => res.json())
-      .then((data) => data.clients && setClients(data.clients))
+      .then((data) => {
+        if (data.clients) {
+          setClients(data.clients);
+        }
+      })
       .catch((err) => console.error("Failed to fetch clients:", err));
   }, []);
 
@@ -66,7 +73,11 @@ export default function Posts() {
   useEffect(() => {
     apiFetch("/posts/get-all-posts")
       .then((res) => res.json())
-      .then((data) => data.posts && setSavedPosts(data.posts))
+      .then((data) => {
+        if (data.posts) {
+          setSavedPosts(data.posts);
+        }
+      })
       .catch((err) => console.error("Failed to fetch posts:", err));
   }, []);
 
@@ -74,7 +85,11 @@ export default function Posts() {
   useEffect(() => {
     apiFetch("/get-all-categories")
       .then((res) => res.json())
-      .then((data) => data.categories && setCategories(data.categories))
+      .then((data) => {
+        if (data.categories) {
+          setCategories(data.categories);
+        }
+      })
       .catch((err) => console.error("Failed to fetch categories:", err));
   }, []);
 
@@ -82,11 +97,14 @@ export default function Posts() {
   useEffect(() => {
     apiFetch("/get-all-topics")
       .then((res) => res.json())
-      .then((data) => data.topics && setTopics(data.topics))
+      .then((data) => {
+        if (data.topics) {
+          setTopics(data.topics);
+        }
+      })
       .catch((err) => console.error("Failed to fetch topics:", err));
   }, []);
 
-  // Generate Post
   const generatePost = async () => {
     if (!selectedClient || !selectedCategory || !selectedTopic || !selectedStyle) {
       toast({
@@ -96,8 +114,10 @@ export default function Posts() {
       });
       return;
     }
+
     setIsGenerating(true);
     setPost(null);
+
     try {
       const response = await apiFetch("/posts/create", {
         method: "POST",
@@ -109,16 +129,25 @@ export default function Posts() {
           visual_style: selectedStyle,
         }),
       });
+
       const data = await response.json();
+
       if (data.posts && data.posts.length > 0) {
         const newPost = data.posts[0];
         setPost(newPost);
         setCaption(newPost.caption + (newPost.hashtags ? `\n\n${newPost.hashtags}` : ""));
+
         // Refresh saved posts
         const postsResponse = await apiFetch("/posts/get-all-posts");
         const postsData = await postsResponse.json();
-        if (postsData.posts) setSavedPosts(postsData.posts);
-        toast({ title: "Post Generated", description: "Your post has been created successfully." });
+        if (postsData.posts) {
+          setSavedPosts(postsData.posts);
+        }
+
+        toast({
+          title: "Post Generated",
+          description: "Your post has been created successfully.",
+        });
       }
     } catch (err) {
       console.error("Failed to generate post:", err);
@@ -132,10 +161,11 @@ export default function Posts() {
     }
   };
 
-  // Regenerate post
   const regeneratePost = async () => {
     if (!selectedClient || !selectedCategory || !selectedTopic || !selectedStyle) return;
+
     setIsGenerating(true);
+
     try {
       const response = await apiFetch("/posts/create", {
         method: "POST",
@@ -147,14 +177,20 @@ export default function Posts() {
           visual_style: selectedStyle,
         }),
       });
+
       const data = await response.json();
+
       if (data.posts && data.posts.length > 0) {
         const newPost = data.posts[0];
         setPost(newPost);
         setCaption(newPost.caption + (newPost.hashtags ? `\n\n${newPost.hashtags}` : ""));
+
+        // Refresh saved posts
         const postsResponse = await apiFetch("/posts/get-all-posts");
         const postsData = await postsResponse.json();
-        if (postsData.posts) setSavedPosts(postsData.posts);
+        if (postsData.posts) {
+          setSavedPosts(postsData.posts);
+        }
       }
     } catch (err) {
       console.error("Failed to regenerate post:", err);
@@ -168,24 +204,35 @@ export default function Posts() {
     }
   };
 
-  // Copy caption
   const copyCaption = () => {
     navigator.clipboard.writeText(caption);
-    toast({ title: "Caption Copied", description: "Caption has been copied to clipboard." });
+    toast({
+      title: "Caption Copied",
+      description: "Caption has been copied to clipboard.",
+    });
   };
 
-  // Finalize post by ID
-  const finalizePostById = async (postId: string, clientId: string) => {
+  const finalizePost = async () => {
+    if (!post) return;
+
     try {
       await apiFetch("/posts/finalize-post", {
         method: "POST",
-        body: JSON.stringify({ client_id: clientId, post_ids: [postId] }),
+        body: JSON.stringify({
+          client_id: post.client_id,
+          post_ids: [post.post_id],
+        }),
       });
-      // Update single generated post
-      if (post && post.post_id === postId) setPost({ ...post, finalized: "True" });
-      // Update savedPosts
-      setSavedPosts((prev) => prev.map((p) => (p.post_id === postId ? { ...p, finalized: "True" } : p)));
-      toast({ title: "Post Finalized", description: "Post finalized and sent for review." });
+
+      setPost({ ...post, finalized: "True" });
+      setSavedPosts((prevPosts) =>
+        prevPosts.map((p) => (p.post_id === post.post_id ? { ...p, finalized: "True" } : p)),
+      );
+
+      toast({
+        title: "Post Finalized",
+        description: "Post finalized and sent for review.",
+      });
     } catch (err) {
       console.error("Failed to finalize post:", err);
       toast({
@@ -196,18 +243,50 @@ export default function Posts() {
     }
   };
 
-  // Delete post by ID
-  const deletePostById = async (postId: string) => {
+  const finalizeSavedPost = async (postId: string) => {
+    const postToFinalize = savedPosts.find((p) => p.post_id === postId);
+    if (!postToFinalize) return;
+
+    try {
+      await apiFetch("/posts/finalize-post", {
+        method: "POST",
+        body: JSON.stringify({
+          client_id: postToFinalize.client_id,
+          post_ids: [postId],
+        }),
+      });
+
+      setSavedPosts((prevPosts) => prevPosts.map((p) => (p.post_id === postId ? { ...p, finalized: "True" } : p)));
+
+      toast({
+        title: "Post Finalized",
+        description: "Post finalized and sent for review.",
+      });
+    } catch (err) {
+      console.error("Failed to finalize post:", err);
+      toast({
+        title: "Finalization Failed",
+        description: "Failed to finalize post. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteSavedPost = async (postId: string) => {
     try {
       await apiFetch("/posts/remove", {
         method: "DELETE",
-        body: JSON.stringify({ post_id: postId }),
+        body: JSON.stringify({
+          post_id: postId,
+        }),
       });
-      // Remove from savedPosts
-      setSavedPosts((prev) => prev.filter((p) => p.post_id !== postId));
-      // Remove generated post if it matches
-      if (post && post.post_id === postId) setPost(null);
-      toast({ title: "Post Deleted", description: "Post has been removed." });
+
+      setSavedPosts((prevPosts) => prevPosts.filter((p) => p.post_id !== postId));
+
+      toast({
+        title: "Post Deleted",
+        description: "Post has been removed.",
+      });
     } catch (err) {
       console.error("Failed to delete post:", err);
       toast({
@@ -234,37 +313,40 @@ export default function Posts() {
                 <SelectValue placeholder="Select Client" />
               </SelectTrigger>
               <SelectContent>
-                {clients.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
+                {clients.map((client) => (
+                  <SelectItem key={client.id} value={client.id}>
+                    {client.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((c) => (
-                  <SelectItem key={c.category_id} value={c.category_id}>
-                    {c.category_name}
+                {categories.map((category) => (
+                  <SelectItem key={category.category_id} value={category.category_id}>
+                    {category.category_name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
             <Select value={selectedTopic} onValueChange={setSelectedTopic}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Topic" />
               </SelectTrigger>
               <SelectContent>
-                {topics.map((t) => (
-                  <SelectItem key={t.topic_id} value={t.topic_id}>
-                    {t.title}
+                {topics.map((topic) => (
+                  <SelectItem key={topic.topic_id} value={topic.topic_id}>
+                    {topic.title}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
             <Select value={selectedStyle} onValueChange={setSelectedStyle}>
               <SelectTrigger>
                 <SelectValue placeholder="Visual Style" />
@@ -277,6 +359,7 @@ export default function Posts() {
                 <SelectItem value="professional">Professional</SelectItem>
               </SelectContent>
             </Select>
+
             <Button onClick={generatePost} disabled={isGenerating} className="w-full">
               {isGenerating ? "Generating..." : "Generate"}
             </Button>
@@ -284,57 +367,85 @@ export default function Posts() {
         </CardContent>
       </Card>
 
-      {/* Generated Post */}
-      {post && !isGenerating && (
-        <Card
-          className={`animate-fade-in transition-all duration-500 ${post.finalized === "True" ? "ring-2 ring-green-500/50 shadow-lg shadow-green-500/20" : ""}`}
-        >
-          <CardContent className="p-6 relative">
-            {post.finalized === "True" && (
-              <div className="absolute top-4 right-4 bg-green-500 text-white rounded-full p-2 animate-scale-in">
-                <Check className="h-5 w-5" />
+      {/* Post Feed Area */}
+      <div className="space-y-6">
+        {isGenerating && (
+          <Card className="animate-fade-in">
+            <CardContent className="p-6">
+              <Skeleton className="w-full aspect-square mb-4" />
+              <Skeleton className="h-32 w-full mb-4" />
+              <div className="flex gap-2">
+                <Skeleton className="h-10 flex-1" />
+                <Skeleton className="h-10 flex-1" />
+                <Skeleton className="h-10 flex-1" />
               </div>
-            )}
-            <img
-              src={post.image_url}
-              alt="Generated post"
-              className="w-full aspect-square object-cover rounded-lg mb-4 animate-fade-in"
-            />
-            <Textarea
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="Caption will appear here..."
-              className="min-h-[120px] mb-4 resize-none"
-              disabled={post.finalized === "True"}
-            />
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={copyCaption} className="flex-1" disabled={post.finalized === "True"}>
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Caption
-              </Button>
-              <Button
-                variant="outline"
-                onClick={regeneratePost}
-                className="flex-1"
-                disabled={isGenerating || post.finalized === "True"}
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isGenerating ? "animate-spin" : ""}`} />
-                Regenerate
-              </Button>
-              <Button
-                onClick={() => finalizePostById(post.post_id, post.client_id)}
-                className="flex-1"
-                disabled={post.finalized === "True"}
-              >
-                <Check className="h-4 w-4 mr-2" />
-                Finalize Post
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Saved Posts */}
+        {post && !isGenerating && (
+          <Card
+            className={`animate-fade-in transition-all duration-500 ${
+              post.finalized === "True" ? "ring-2 ring-green-500/50 shadow-lg shadow-green-500/20" : ""
+            }`}
+          >
+            <CardContent className="p-6 relative">
+              {post.finalized === "True" && (
+                <div className="absolute top-4 right-4 bg-green-500 text-white rounded-full p-2 animate-scale-in">
+                  <Check className="h-5 w-5" />
+                </div>
+              )}
+
+              <img
+                src={post.image_url}
+                alt="Generated post"
+                className="w-full aspect-square object-cover rounded-lg mb-4 animate-fade-in"
+              />
+
+              <Textarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Caption will appear here..."
+                className="min-h-[120px] mb-4 resize-none"
+                disabled={post.finalized === "True"}
+              />
+
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={copyCaption} className="flex-1" disabled={post.finalized === "True"}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Caption
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={regeneratePost}
+                  className="flex-1"
+                  disabled={isGenerating || post.finalized === "True"}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isGenerating ? "animate-spin" : ""}`} />
+                  Regenerate
+                </Button>
+
+                <Button onClick={finalizePost} className="flex-1" disabled={post.finalized === "True"}>
+                  <Check className="h-4 w-4 mr-2" />
+                  Finalize Post
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {!post && !isGenerating && (
+          <Card className="border-dashed">
+            <CardContent className="p-12 text-center text-muted-foreground">
+              <Sparkles className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-lg">Select options above and click Generate to create a post</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Saved Posts Feed */}
       {savedPosts.length > 0 && (
         <div className="mt-12">
           <h2 className="text-2xl font-bold mb-6">Your Posts</h2>
@@ -342,15 +453,18 @@ export default function Posts() {
             {savedPosts.map((savedPost) => (
               <Card
                 key={savedPost.post_id}
-                className={`animate-fade-in transition-all duration-300 hover:shadow-lg relative ${savedPost.finalized === "True" ? "ring-2 ring-green-500/30" : ""}`}
+                className={`animate-fade-in transition-all duration-300 hover:shadow-lg relative ${
+                  savedPost.finalized === "True" ? "ring-2 ring-green-500/30" : ""
+                }`}
               >
                 <CardContent className="p-0">
+                  {/* Action Buttons */}
                   <div className="absolute top-3 right-3 flex gap-2 z-10">
                     <Button
                       size="icon"
                       variant="secondary"
                       className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
-                      onClick={() => finalizePostById(savedPost.post_id, savedPost.client_id)}
+                      onClick={() => finalizeSavedPost(savedPost.post_id)}
                       disabled={savedPost.finalized === "True"}
                     >
                       <CheckCircle className="h-4 w-4" />
@@ -359,11 +473,13 @@ export default function Posts() {
                       size="icon"
                       variant="secondary"
                       className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground"
-                      onClick={() => deletePostById(savedPost.post_id)}
+                      onClick={() => deleteSavedPost(savedPost.post_id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
+
+                  {/* Finalized Badge */}
                   {savedPost.finalized === "True" && (
                     <div className="absolute top-3 left-3 z-10 animate-scale-in">
                       <div className="bg-green-500 text-white rounded-full p-1.5 shadow-lg">
@@ -371,6 +487,8 @@ export default function Posts() {
                       </div>
                     </div>
                   )}
+
+                  {/* Post Image */}
                   <div className="relative aspect-square overflow-hidden">
                     <img
                       src={savedPost.image_url}
@@ -378,6 +496,8 @@ export default function Posts() {
                       className="w-full h-full object-cover"
                     />
                   </div>
+
+                  {/* Caption */}
                   <div className="p-4">
                     <p className="text-sm text-foreground whitespace-pre-line line-clamp-4">{savedPost.caption}</p>
                   </div>
