@@ -53,31 +53,40 @@ export default function CreateBusiness() {
         audience: formData.audience,
         writing_instructions: formData.writing_instructions,
         tagline: formData.tagline,
-        call_to_actions: formData.call_to_actions.split(',').map(s => s.trim()),
+        call_to_actions: formData.call_to_actions.split(",").map((s) => s.trim()),
         caption_ending: formData.caption_ending,
-        writing_samples: formData.writing_samples.split('\n').map(s => s.trim()).filter(s => s),
+        writing_samples: formData.writing_samples
+          .split("\n")
+          .map((s) => s.trim())
+          .filter((s) => s),
         contact_info: formData.contact_info,
         website: formData.website,
         number: formData.number,
         mail: formData.mail,
         design_guide: {
-          brand_colors: formData.brand_colors.split(',').map(s => s.trim()),
+          brand_colors: formData.brand_colors.split(",").map((s) => s.trim()),
           typography: formData.typography,
           design_style: formData.design_style,
           image_mood: formData.image_mood,
           dos_donts: formData.dos_donts,
-          reference_links: formData.reference_links.split('\n').map(s => s.trim()).filter(s => s),
+          reference_links: formData.reference_links
+            .split("\n")
+            .map((s) => s.trim())
+            .filter((s) => s),
           asset_notes: formData.asset_notes,
-          format_preferences: formData.format_preferences.split(',').map(s => s.trim()),
+          format_preferences: formData.format_preferences.split(",").map((s) => s.trim()),
           design_checkpoints: formData.design_checkpoints,
         },
-        logo_urls: formData.logo_urls.split('\n').map(s => s.trim()).filter(s => s),
+        logo_urls: formData.logo_urls
+          .split("\n")
+          .map((s) => s.trim())
+          .filter((s) => s),
       };
 
-      const response = await fetch('https://5d3221f9a372.ngrok-free.app/create', {
-        method: 'POST',
+      const response = await fetch("https://dc5044aa7aa1.ngrok-free.app/clients/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(apiData),
       });
@@ -89,7 +98,7 @@ export default function CreateBusiness() {
           title: "Success!",
           description: `Client created successfully with ID: ${result.client_id}`,
         });
-        navigate('/clients');
+        navigate("/clients");
       } else {
         toast({
           title: "Error",
@@ -468,7 +477,7 @@ export default function CreateBusiness() {
         </Tabs>
 
         <div className="mt-6 flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate('/clients')} disabled={isLoading}>
+          <Button type="button" variant="outline" onClick={() => navigate("/clients")} disabled={isLoading}>
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading}>
