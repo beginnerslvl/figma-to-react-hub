@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
+import Posts from "./pages/Posts";
 import CreateBusiness from "./pages/CreateBusiness";
 import Clients from "./pages/Clients";
 import Topics from "./pages/Topics";
@@ -31,7 +32,7 @@ const App = () => (
               </header>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/posts" element={<Index />} />
+                <Route path="/posts" element={<Posts />} />
                 <Route path="/topics" element={<Topics />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/calendar" element={<Calendar />} />
