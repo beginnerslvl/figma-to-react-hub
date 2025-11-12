@@ -1,5 +1,6 @@
 import { Home, FileText, MessageSquare, Users, Calendar, BarChart3, Briefcase, Share2, HelpCircle, FlaskConical } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import logo from "@/assets/logo.png";
 import {
   Sidebar,
   SidebarContent,
@@ -37,9 +38,7 @@ export function AppSidebar() {
       <SidebarContent>
         {/* Logo */}
         <div className="p-4 flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-white rounded-full" />
-          </div>
+          <img src={logo} alt="Studio Logo" className="w-8 h-8 object-contain" />
           {!isCollapsed && <span className="font-semibold text-lg">Studio</span>}
         </div>
 
