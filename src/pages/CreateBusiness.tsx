@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,9 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Loader2 } from "lucide-react";
 
 export default function CreateBusiness() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     client_name: "",
     focus: "",
@@ -36,12 +39,73 @@ export default function CreateBusiness() {
     logo_urls: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Coming Soon",
-      description: "Business creation functionality will be available soon!",
-    });
+    setIsLoading(true);
+
+    try {
+      // Transform form data to API format
+      const apiData = {
+        client_name: formData.client_name,
+        focus: formData.focus,
+        services: formData.services,
+        business_description: formData.business_description,
+        audience: formData.audience,
+        writing_instructions: formData.writing_instructions,
+        tagline: formData.tagline,
+        call_to_actions: formData.call_to_actions.split(',').map(s => s.trim()),
+        caption_ending: formData.caption_ending,
+        writing_samples: formData.writing_samples.split('\n').map(s => s.trim()).filter(s => s),
+        contact_info: formData.contact_info,
+        website: formData.website,
+        number: formData.number,
+        mail: formData.mail,
+        design_guide: {
+          brand_colors: formData.brand_colors.split(',').map(s => s.trim()),
+          typography: formData.typography,
+          design_style: formData.design_style,
+          image_mood: formData.image_mood,
+          dos_donts: formData.dos_donts,
+          reference_links: formData.reference_links.split('\n').map(s => s.trim()).filter(s => s),
+          asset_notes: formData.asset_notes,
+          format_preferences: formData.format_preferences.split(',').map(s => s.trim()),
+          design_checkpoints: formData.design_checkpoints,
+        },
+        logo_urls: formData.logo_urls.split('\n').map(s => s.trim()).filter(s => s),
+      };
+
+      const response = await fetch('https://5d3221f9a372.ngrok-free.app/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(apiData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: `Client created successfully with ID: ${result.client_id}`,
+        });
+        navigate('/clients');
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Failed to create client",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create client. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -404,10 +468,13 @@ export default function CreateBusiness() {
         </Tabs>
 
         <div className="mt-6 flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => toast({ title: "Coming Soon", description: "Cancel functionality coming soon!" })}>
+          <Button type="button" variant="outline" onClick={() => navigate('/clients')} disabled={isLoading}>
             Cancel
           </Button>
-          <Button type="submit">Create Business</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Create Business
+          </Button>
         </div>
       </form>
     </div>
