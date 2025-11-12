@@ -1,4 +1,4 @@
-import { Home, FileText, MessageSquare, Users, Calendar, BarChart3, Briefcase, Share2, HelpCircle } from "lucide-react";
+import { Home, FileText, MessageSquare, Users, Calendar, BarChart3, Briefcase, Share2, HelpCircle, FlaskConical } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -24,6 +24,7 @@ const navigationItems = [
 const secondaryItems = [
   { title: "Create Business", url: "/create-business", icon: Briefcase },
   { title: "Connect to a Social", url: "/connect-social", icon: Share2 },
+  { title: "API Test", url: "/api-test", icon: FlaskConical },
   { title: "Help", url: "/help", icon: HelpCircle },
 ];
 
