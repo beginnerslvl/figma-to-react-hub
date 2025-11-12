@@ -42,9 +42,9 @@ export default function Clients() {
   const fetchClients = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('https://5d3221f9a372.ngrok-free.app/all-clients');
+      const response = await fetch("https://5d3221f9a372.ngrok-free.app/clients/all-clients");
       const data = await response.json();
-      
+
       if (response.ok && data.clients) {
         setClients(data.clients);
       } else {
@@ -85,7 +85,7 @@ export default function Clients() {
       setIsDeleting(true);
       const response = await fetch(
         `https://5d3221f9a372.ngrok-free.app/remove?client_id=${clientToDelete.id}&delete_all_data=true`,
-        { method: 'DELETE' }
+        { method: "DELETE" },
       );
 
       const result = await response.json();
@@ -95,7 +95,7 @@ export default function Clients() {
           title: "Success",
           description: `${clientToDelete.name} has been removed successfully`,
         });
-        setClients(clients.filter(c => c.id !== clientToDelete.id));
+        setClients(clients.filter((c) => c.id !== clientToDelete.id));
       } else {
         toast({
           title: "Error",
@@ -128,9 +128,7 @@ export default function Clients() {
               <p className="text-muted-foreground">Manage your business clients</p>
             </div>
           </div>
-          <Button onClick={() => navigate("/create-business")}>
-            Add New Client
-          </Button>
+          <Button onClick={() => navigate("/create-business")}>Add New Client</Button>
         </div>
       </div>
 
@@ -145,80 +143,72 @@ export default function Clients() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {clients.map((client) => (
-          <Card 
-            key={client.id} 
-            className="hover:shadow-lg transition-shadow"
-          >
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-xl mb-1">{client.name}</CardTitle>
-                  <CardDescription className="text-sm">ID: {client.id}</CardDescription>
+            <Card key={client.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-xl mb-1">{client.name}</CardTitle>
+                    <CardDescription className="text-sm">ID: {client.id}</CardDescription>
+                  </div>
+                  <Badge variant="secondary">{client.focus}</Badge>
                 </div>
-                <Badge variant="secondary">{client.focus}</Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium mb-1">Services</p>
-                <p className="text-sm text-muted-foreground">{client.services}</p>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium mb-1">Description</p>
-                <p className="text-sm text-muted-foreground line-clamp-2">{client.business_description}</p>
-              </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium mb-1">Services</p>
+                  <p className="text-sm text-muted-foreground">{client.services}</p>
+                </div>
 
-              <div className="pt-4 border-t space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground truncate">{client.mail}</span>
+                <div>
+                  <p className="text-sm font-medium mb-1">Description</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{client.business_description}</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{client.number}</span>
+
+                <div className="pt-4 border-t space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground truncate">{client.mail}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{client.number}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <a
+                      href={client.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline flex items-center gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toast({ title: "Coming Soon", description: "Website link functionality coming soon!" });
+                        e.preventDefault();
+                      }}
+                    >
+                      Visit Website
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={(e) => handleUpdate(e, client.name)}
+                    >
+                      <Pencil className="h-4 w-4 mr-1" />
+                      Update
+                    </Button>
+                    <Button variant="destructive" size="sm" className="flex-1" onClick={(e) => handleRemove(e, client)}>
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Remove
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                  <a 
-                    href={client.website} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline flex items-center gap-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toast({ title: "Coming Soon", description: "Website link functionality coming soon!" });
-                      e.preventDefault();
-                    }}
-                  >
-                    Visit Website
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
-                
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={(e) => handleUpdate(e, client.name)}
-                  >
-                    <Pencil className="h-4 w-4 mr-1" />
-                    Update
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={(e) => handleRemove(e, client)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Remove
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
