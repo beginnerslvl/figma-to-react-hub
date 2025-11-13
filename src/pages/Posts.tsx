@@ -140,7 +140,7 @@ export default function Posts() {
     setPost(null);
 
     try {
-      let referenceLinks: string[] = [];
+      let referenceImages: string[] = [];
 
       // Upload reference image if provided
       if (referenceImage) {
@@ -159,7 +159,7 @@ export default function Posts() {
 
         const uploadData = await uploadResponse.json();
         if (uploadData.url) {
-          referenceLinks = [uploadData.url];
+          referenceImages = [uploadData.url];
         }
       }
 
@@ -171,7 +171,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
-          ...(referenceLinks.length > 0 && { reference_links: referenceLinks }),
+          ...(referenceImages.length > 0 && { reference_images: referenceImages }),
         }),
       });
 
@@ -212,7 +212,7 @@ export default function Posts() {
     setIsGenerating(true);
 
     try {
-      let referenceLinks: string[] = [];
+      let referenceImages: string[] = [];
 
       // Upload reference image if provided
       if (referenceImage) {
@@ -231,7 +231,7 @@ export default function Posts() {
 
         const uploadData = await uploadResponse.json();
         if (uploadData.url) {
-          referenceLinks = [uploadData.url];
+          referenceImages = [uploadData.url];
         }
       }
 
@@ -243,7 +243,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
-          ...(referenceLinks.length > 0 && { reference_links: referenceLinks }),
+          ...(referenceImages.length > 0 && { reference_images: referenceImages }),
         }),
       });
 
