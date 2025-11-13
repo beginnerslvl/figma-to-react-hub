@@ -22,11 +22,11 @@ export function WeeklyEngagementChart() {
 
   return (
     <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={handleChartClick}>
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">Weekly Engagement</CardTitle>
+      <CardHeader className="pb-2 sm:pb-4">
+        <CardTitle className="text-base sm:text-lg font-semibold">Weekly Engagement</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={200}>
+        <ResponsiveContainer width="100%" height={180} className="sm:h-[200px]">
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
             <XAxis 

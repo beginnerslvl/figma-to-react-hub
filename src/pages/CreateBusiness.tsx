@@ -120,25 +120,25 @@ export default function CreateBusiness() {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-5xl">
-      <div className="mb-4 sm:mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Briefcase className="h-6 w-6 text-primary" />
+    <div className="container mx-auto p-3 sm:p-4 lg:p-6 max-w-5xl">
+      <div className="mb-3 sm:mb-4 lg:mb-6">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+            <Briefcase className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Create New Business</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Create New Business</h1>
         </div>
-        <p className="text-sm text-muted-foreground">Fill in the details to create a new business profile</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">Fill in the details to create a new business profile</p>
       </div>
 
       <form onSubmit={handleSubmit}>
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2">
-            <TabsTrigger value="basic">Basic</TabsTrigger>
-            <TabsTrigger value="writing">Writing</TabsTrigger>
-            <TabsTrigger value="contact">Contact</TabsTrigger>
-            <TabsTrigger value="design">Design</TabsTrigger>
-            <TabsTrigger value="assets">Assets</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-2 h-auto p-1">
+            <TabsTrigger value="basic" className="text-xs sm:text-sm py-2">Basic</TabsTrigger>
+            <TabsTrigger value="writing" className="text-xs sm:text-sm py-2">Writing</TabsTrigger>
+            <TabsTrigger value="contact" className="text-xs sm:text-sm py-2">Contact</TabsTrigger>
+            <TabsTrigger value="design" className="text-xs sm:text-sm py-2">Design</TabsTrigger>
+            <TabsTrigger value="assets" className="text-xs sm:text-sm py-2">Assets</TabsTrigger>
           </TabsList>
 
           <TabsContent value="basic" className="space-y-4">

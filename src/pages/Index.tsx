@@ -84,18 +84,18 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-background p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Welcome to AI Content generation !</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Welcome to AI Content generation !</h1>
       </div>
 
       {/* Top Section */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {/* Jumpstart Progress */}
         {/* Combined Card */}
-        <Card className="xl:col-span-2 p-4 sm:p-6 cursor-pointer hover:shadow-lg transition-shadow">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="lg:col-span-2 p-3 sm:p-4 lg:p-6 cursor-pointer hover:shadow-lg transition-shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Left – Jumpstart Progress */}
             <div>
               <CardHeader className="p-0">
@@ -139,8 +139,8 @@ const Index = () => {
       </div>
 
       {/* Second Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
-        <div className="xl:col-span-2 space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+        <div className="lg:col-span-2 space-y-3 sm:space-y-4 lg:space-y-6">
           {/* Action Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <Card
@@ -180,8 +180,8 @@ const Index = () => {
 
           {/* Quick Actions */}
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Quick Actions</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               {quickActions.map((action, i) => (
                 <Card
                   key={i}
@@ -206,8 +206,8 @@ const Index = () => {
 
           {/* Helpful Links */}
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Helpful Links</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-2 sm:mb-3">Helpful Links</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
               {helpfulLinks.map((link, i) => (
                 <Card
                   key={i}
