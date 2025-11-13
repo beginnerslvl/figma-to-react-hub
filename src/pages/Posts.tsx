@@ -393,7 +393,7 @@ export default function Posts() {
       {/* Top Bar with Dropdowns */}
       <Card>
         <CardContent className="p-4 sm:p-6 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Select value={selectedClient} onValueChange={setSelectedClient}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Client" />
@@ -445,10 +445,6 @@ export default function Posts() {
                 <SelectItem value="minimal">Clean & Minimal</SelectItem>
               </SelectContent>
             </Select>
-
-            <Button onClick={generatePost} disabled={isGenerating} className="w-full">
-              {isGenerating ? "Generating..." : "Generate"}
-            </Button>
           </div>
 
           {/* Custom Prompt */}
@@ -502,6 +498,11 @@ export default function Posts() {
               )}
             </div>
           </div>
+
+          {/* Generate Button */}
+          <Button onClick={generatePost} disabled={isGenerating} className="w-full" size="lg">
+            {isGenerating ? "Generating..." : "Generate Post"}
+          </Button>
         </CardContent>
       </Card>
 
