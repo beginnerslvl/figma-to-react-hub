@@ -62,8 +62,8 @@ export default function Posts() {
   // Saved posts feed
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
 
-  // Debug request preview
-  const [requestPreview, setRequestPreview] = useState<any>(null);
+  // Custom prompt
+  const [customPrompt, setCustomPrompt] = useState<string>("");
 
   // Fetch clients
   useEffect(() => {
@@ -179,11 +179,10 @@ export default function Posts() {
         category_id: selectedCategory,
         topics: [selectedTopic],
         number_of_posts: 1,
+        custom_prompt: customPrompt,
         visual_style: selectedStyle,
         ...(imageUrl && { reference_image: [imageUrl] }),
       };
-
-      setRequestPreview(requestBody);
 
       // Create post with image URL
       const response = await apiFetch("/posts/create", {
@@ -259,6 +258,7 @@ export default function Posts() {
           category_id: selectedCategory,
           topics: [selectedTopic],
           number_of_posts: 1,
+          custom_prompt: customPrompt,
           visual_style: selectedStyle,
           ...(imageUrl && { reference_image: [imageUrl] }),
         }),
@@ -451,6 +451,20 @@ export default function Posts() {
             </Button>
           </div>
 
+          {/* Custom Prompt */}
+          <div className="space-y-2">
+            <Label htmlFor="custom-prompt" className="text-sm font-medium">
+              Custom Prompt (Optional)
+            </Label>
+            <Textarea
+              id="custom-prompt"
+              value={customPrompt}
+              onChange={(e) => setCustomPrompt(e.target.value)}
+              placeholder="Add any specific instructions for post generation..."
+              className="min-h-[80px] resize-none"
+            />
+          </div>
+
           {/* Reference Image Upload */}
           <div className="space-y-2">
             <Label htmlFor="reference-image" className="text-sm font-medium">
@@ -490,21 +504,6 @@ export default function Posts() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Debug Request Preview */}
-      {requestPreview && (
-        <Card className="border-yellow-500/50 bg-yellow-50 dark:bg-yellow-950/20">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-2 text-sm">Debug: Request Payload</h3>
-            <pre className="text-xs bg-background p-3 rounded-lg overflow-auto max-h-48">
-              {JSON.stringify(requestPreview, null, 2)}
-            </pre>
-            <p className="text-xs text-muted-foreground mt-2">
-              Endpoint: POST {BASE_URL}/posts/create
-            </p>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Post Feed Area */}
       <div className="space-y-6">
