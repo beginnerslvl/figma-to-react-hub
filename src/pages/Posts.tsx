@@ -171,7 +171,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
-          ...(referenceImageUrl && { reference_image: referenceImageUrl }),
+          ...(referenceImageUrl && { reference_image: [referenceImageUrl] }),
         }),
       });
 
