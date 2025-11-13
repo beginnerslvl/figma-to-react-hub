@@ -489,11 +489,11 @@ export default function Posts() {
                   )}
 
                   {/* Post Image */}
-                  <div className="relative aspect-square overflow-hidden">
+                  <div className="relative w-full overflow-hidden">
                     <img
                       src={savedPost.image_url}
                       alt={`Post ${savedPost.post_id}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-auto object-contain"
                     />
                   </div>
 
