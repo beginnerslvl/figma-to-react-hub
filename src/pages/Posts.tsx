@@ -4,9 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, RefreshCw, Check, Sparkles, Trash2, CheckCircle } from "lucide-react";
-import { apiFetch } from "@/lib/api";
+import { Copy, RefreshCw, Check, Sparkles, Trash2, CheckCircle, Upload, X } from "lucide-react";
+import { apiFetch, BASE_URL } from "@/lib/api";
 
 interface Client {
   id: string;
@@ -48,6 +50,8 @@ export default function Posts() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedTopic, setSelectedTopic] = useState<string>("");
   const [selectedStyle, setSelectedStyle] = useState<string>("");
+  const [referenceImage, setReferenceImage] = useState<File | null>(null);
+  const [referenceImagePreview, setReferenceImagePreview] = useState<string>("");
 
   // Post state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -105,6 +109,23 @@ export default function Posts() {
       .catch((err) => console.error("Failed to fetch topics:", err));
   }, []);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setReferenceImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setReferenceImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeReferenceImage = () => {
+    setReferenceImage(null);
+    setReferenceImagePreview("");
+  };
+
   const generatePost = async () => {
     if (!selectedClient || !selectedCategory || !selectedTopic || !selectedStyle) {
       toast({
@@ -119,6 +140,29 @@ export default function Posts() {
     setPost(null);
 
     try {
+      let referenceLinks: string[] = [];
+
+      // Upload reference image if provided
+      if (referenceImage) {
+        const formData = new FormData();
+        formData.append("file", referenceImage);
+        formData.append("image_name", referenceImage.name);
+        formData.append("client_id", selectedClient);
+
+        const uploadResponse = await fetch(`${BASE_URL}/images/upload`, {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.url) {
+          referenceLinks = [uploadData.url];
+        }
+      }
+
       const response = await apiFetch("/posts/create", {
         method: "POST",
         body: JSON.stringify({
@@ -127,6 +171,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
+          ...(referenceLinks.length > 0 && { reference_links: referenceLinks }),
         }),
       });
 
@@ -167,6 +212,29 @@ export default function Posts() {
     setIsGenerating(true);
 
     try {
+      let referenceLinks: string[] = [];
+
+      // Upload reference image if provided
+      if (referenceImage) {
+        const formData = new FormData();
+        formData.append("file", referenceImage);
+        formData.append("image_name", referenceImage.name);
+        formData.append("client_id", selectedClient);
+
+        const uploadResponse = await fetch(`${BASE_URL}/images/upload`, {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.url) {
+          referenceLinks = [uploadData.url];
+        }
+      }
+
       const response = await apiFetch("/posts/create", {
         method: "POST",
         body: JSON.stringify({
@@ -175,6 +243,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
+          ...(referenceLinks.length > 0 && { reference_links: referenceLinks }),
         }),
       });
 
@@ -306,7 +375,7 @@ export default function Posts() {
 
       {/* Top Bar with Dropdowns */}
       <Card>
-        <CardContent className="p-4 sm:p-6">
+        <CardContent className="p-4 sm:p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
             <Select value={selectedClient} onValueChange={setSelectedClient}>
               <SelectTrigger>
@@ -363,6 +432,44 @@ export default function Posts() {
             <Button onClick={generatePost} disabled={isGenerating} className="w-full">
               {isGenerating ? "Generating..." : "Generate"}
             </Button>
+          </div>
+
+          {/* Reference Image Upload */}
+          <div className="space-y-2">
+            <Label htmlFor="reference-image" className="text-sm font-medium">
+              Reference Image (Optional)
+            </Label>
+            <div className="flex gap-2 items-start">
+              {!referenceImagePreview ? (
+                <div className="flex-1">
+                  <Input
+                    id="reference-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="cursor-pointer"
+                  />
+                </div>
+              ) : (
+                <div className="flex-1 relative">
+                  <div className="relative inline-block">
+                    <img
+                      src={referenceImagePreview}
+                      alt="Reference"
+                      className="h-20 w-20 object-cover rounded-lg border"
+                    />
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                      onClick={removeReferenceImage}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
