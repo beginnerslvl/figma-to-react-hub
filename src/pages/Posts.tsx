@@ -52,6 +52,7 @@ export default function Posts() {
   const [selectedStyle, setSelectedStyle] = useState<string>("");
   const [referenceImage, setReferenceImage] = useState<File | null>(null);
   const [referenceImagePreview, setReferenceImagePreview] = useState<string>("");
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
 
   // Post state
   const [isGenerating, setIsGenerating] = useState(false);
@@ -109,7 +110,7 @@ export default function Posts() {
       .catch((err) => console.error("Failed to fetch topics:", err));
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setReferenceImage(file);
@@ -118,12 +119,54 @@ export default function Posts() {
         setReferenceImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Upload image immediately
+      if (!selectedClient) {
+        toast({
+          title: "Client Required",
+          description: "Please select a client before uploading an image.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("image_name", file.name);
+        formData.append("client_id", selectedClient);
+
+        const uploadResponse = await fetch(`${BASE_URL}/images/upload`, {
+          method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+          body: formData,
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.url) {
+          setUploadedImageUrl(uploadData.url);
+          toast({
+            title: "Image Uploaded",
+            description: "Reference image uploaded successfully.",
+          });
+        }
+      } catch (err) {
+        console.error("Failed to upload image:", err);
+        toast({
+          title: "Upload Failed",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const removeReferenceImage = () => {
     setReferenceImage(null);
     setReferenceImagePreview("");
+    setUploadedImageUrl("");
   };
 
   const generatePost = async () => {
@@ -140,29 +183,6 @@ export default function Posts() {
     setPost(null);
 
     try {
-      let referenceImageUrl: string | null = null;
-
-      // Upload reference image if provided
-      if (referenceImage) {
-        const formData = new FormData();
-        formData.append("file", referenceImage);
-        formData.append("image_name", referenceImage.name);
-        formData.append("client_id", selectedClient);
-
-        const uploadResponse = await fetch(`${BASE_URL}/images/upload`, {
-          method: "POST",
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-          body: formData,
-        });
-
-        const uploadData = await uploadResponse.json();
-        if (uploadData.url) {
-          referenceImageUrl = uploadData.url;
-        }
-      }
-
       const response = await apiFetch("/posts/create", {
         method: "POST",
         body: JSON.stringify({
@@ -171,7 +191,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
-          ...(referenceImageUrl && { reference_image: [referenceImageUrl] }),
+          ...(uploadedImageUrl && { reference_image: [uploadedImageUrl] }),
         }),
       });
 
@@ -212,29 +232,6 @@ export default function Posts() {
     setIsGenerating(true);
 
     try {
-      let referenceImageUrl: string | null = null;
-
-      // Upload reference image if provided
-      if (referenceImage) {
-        const formData = new FormData();
-        formData.append("file", referenceImage);
-        formData.append("image_name", referenceImage.name);
-        formData.append("client_id", selectedClient);
-
-        const uploadResponse = await fetch(`${BASE_URL}/images/upload`, {
-          method: "POST",
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-          body: formData,
-        });
-
-        const uploadData = await uploadResponse.json();
-        if (uploadData.url) {
-          referenceImageUrl = uploadData.url;
-        }
-      }
-
       const response = await apiFetch("/posts/create", {
         method: "POST",
         body: JSON.stringify({
@@ -243,7 +240,7 @@ export default function Posts() {
           topics: [selectedTopic],
           number_of_posts: 1,
           visual_style: selectedStyle,
-          ...(referenceImageUrl && { reference_image: referenceImageUrl }),
+          ...(uploadedImageUrl && { reference_image: [uploadedImageUrl] }),
         }),
       });
 
