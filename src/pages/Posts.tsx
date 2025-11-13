@@ -349,14 +349,14 @@ export default function Posts() {
 
             <Select value={selectedStyle} onValueChange={setSelectedStyle}>
               <SelectTrigger>
-                <SelectValue placeholder="Visual Style" />
+                <SelectValue placeholder="Poster/Ad Style" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="minimalist">Minimalist</SelectItem>
-                <SelectItem value="luxury">Luxury</SelectItem>
-                <SelectItem value="modern">Modern</SelectItem>
-                <SelectItem value="playful">Playful</SelectItem>
-                <SelectItem value="professional">Professional</SelectItem>
+                <SelectItem value="bold">Bold & Eye-Catching</SelectItem>
+                <SelectItem value="elegant">Elegant & Sophisticated</SelectItem>
+                <SelectItem value="vibrant">Vibrant & Colorful</SelectItem>
+                <SelectItem value="vintage">Vintage & Retro</SelectItem>
+                <SelectItem value="minimal">Clean & Minimal</SelectItem>
               </SelectContent>
             </Select>
 
