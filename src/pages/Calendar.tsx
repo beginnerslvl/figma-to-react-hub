@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { format, addDays, startOfWeek } from "date-fns";
+import { apiFetch } from "@/lib/api";
 
 interface ScheduledPost {
   id: string;
@@ -22,12 +23,44 @@ interface ScheduledPost {
 
 const Calendar = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
-  const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([
-    { id: "1", title: "LinkedIn Post", platform: "LinkedIn", time: "10:00", day: 2, hour: 10, color: "bg-blue-100 border-blue-300" },
-    { id: "2", title: "Twitter Thread", platform: "Twitter", time: "14:30", day: 2, hour: 14, color: "bg-sky-100 border-sky-300" },
-    { id: "3", title: "Instagram Story", platform: "Instagram", time: "12:00", day: 3, hour: 12, color: "bg-pink-100 border-pink-300" },
-    { id: "4", title: "Facebook Update", platform: "Facebook", time: "16:00", day: 4, hour: 16, color: "bg-indigo-100 border-indigo-300" },
-  ]);
+  const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await apiFetch("/posts/get-all-posts");
+        const data = await response.json();
+        
+        // Convert posts to scheduled format with mock scheduling
+        const colors = [
+          "bg-blue-100 border-blue-300",
+          "bg-pink-100 border-pink-300",
+          "bg-green-100 border-green-300",
+          "bg-purple-100 border-purple-300",
+          "bg-yellow-100 border-yellow-300",
+        ];
+        
+        const mockScheduled = (data.posts || []).slice(0, 8).map((post: any, index: number) => ({
+          id: post.post_id,
+          title: post.caption.slice(0, 30) + "...",
+          platform: ["Instagram", "LinkedIn", "Twitter", "Facebook"][index % 4],
+          time: `${9 + (index % 8)}:00`,
+          day: (index % 5) + 1,
+          hour: 9 + (index % 8),
+          color: colors[index % colors.length],
+        }));
+        
+        setScheduledPosts(mockScheduled);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newPost, setNewPost] = useState({
