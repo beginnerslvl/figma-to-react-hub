@@ -109,34 +109,34 @@ export default function Clients() {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-6">
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Users className="h-6 w-6 text-primary" />
+    <div className="container mx-auto p-3 sm:p-4 lg:p-6">
+      <div className="mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-2">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+              <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Clients</h1>
-              <p className="text-sm text-muted-foreground">Manage your business clients</p>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Clients</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">Manage your business clients</p>
             </div>
           </div>
-          <Button onClick={() => navigate("/create-business")} className="w-full sm:w-auto">
+          <Button onClick={() => navigate("/create-business")} className="w-full sm:w-auto text-sm">
             Add New Client
           </Button>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="flex items-center justify-center py-8 sm:py-12">
+          <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-primary" />
         </div>
       ) : clients.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No clients found. Create your first client to get started!</p>
+        <div className="text-center py-8 sm:py-12">
+          <p className="text-sm sm:text-base text-muted-foreground">No clients found. Create your first client to get started!</p>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {clients.map((client) => (
             <Card 
               key={client.id} 

@@ -193,18 +193,18 @@ export default function Topics() {
   const filteredTopics = selectedCategory ? topics.filter((t) => t.category_id === selectedCategory) : topics;
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Topics</h1>
-        <p className="text-sm text-muted-foreground mt-1">Manage content topics and categories for your clients</p>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Topics</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">Manage content topics and categories for your clients</p>
       </div>
 
 
       {/* Top Panel */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-4 items-end">
+        <CardContent className="pt-4 sm:pt-6">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 items-stretch sm:items-end">
             {/* Select Category */}
             <div className="flex-1 min-w-[200px]">
               <Label htmlFor="category-select">Select Category</Label>
@@ -315,9 +315,9 @@ export default function Topics() {
 
       {/* Topics Grid */}
       {topicsLoading ? (
-        <div className="text-center py-12 text-muted-foreground">Loading topics...</div>
+        <div className="text-center py-8 sm:py-12 text-sm sm:text-base text-muted-foreground">Loading topics...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {filteredTopics.map((topic) => (
             <Card
               key={topic.topic_id}

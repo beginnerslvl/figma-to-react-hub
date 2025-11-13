@@ -298,16 +298,16 @@ export default function Posts() {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
-      <div className="flex items-center gap-2 mb-6 sm:mb-8">
-        <Sparkles className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl sm:text-3xl font-bold">Generate Posts</h1>
+    <div className="container mx-auto p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+      <div className="flex items-center gap-2 mb-4 sm:mb-6">
+        <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Generate Posts</h1>
       </div>
 
       {/* Top Bar with Dropdowns */}
       <Card>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
             <Select value={selectedClient} onValueChange={setSelectedClient}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Client" />
@@ -447,9 +447,9 @@ export default function Posts() {
 
       {/* Saved Posts Feed */}
       {savedPosts.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold mb-6">Your Posts</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="mt-8 sm:mt-12">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Your Posts</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {savedPosts.map((savedPost) => (
               <Card
                 key={savedPost.post_id}

@@ -25,8 +25,8 @@ const App = () => (
         <SidebarProvider>
           <div className="flex min-h-screen w-full">
             <AppSidebar />
-            <main className="flex-1">
-              <header className="sticky top-0 z-10 flex h-14 items-center border-b bg-background px-4">
+            <main className="flex-1 overflow-x-hidden">
+              <header className="sticky top-0 z-10 flex h-12 sm:h-14 items-center border-b bg-background px-3 sm:px-4">
                 <SidebarTrigger />
               </header>
               <Routes>

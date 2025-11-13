@@ -88,12 +88,12 @@ const Calendar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="space-y-4">
+    <div className="min-h-screen bg-background p-3 sm:p-4 lg:p-6">
+      <div className="space-y-3 sm:space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Welcome to AI Content generation !</h1>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Welcome to AI Content generation !</h1>
           </div>
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -168,23 +168,23 @@ const Calendar = () => {
         </div>
 
         {/* Calendar Controls */}
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
+        <Card className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
             <div className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5 text-muted-foreground" />
-              <span className="font-medium">
+              <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+              <span className="text-sm sm:text-base font-medium">
                 {format(currentWeekStart, "MMM d")} - {format(addDays(currentWeekStart, 6), "MMM d, yyyy")}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" onClick={handlePreviousWeek}>
-                <ChevronLeft className="h-4 w-4" />
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <Button variant="outline" size="icon" onClick={handlePreviousWeek} className="h-8 w-8 sm:h-10 sm:w-10">
+                <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
-              <Button variant="outline" onClick={() => setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))}>
+              <Button variant="outline" onClick={() => setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))} className="text-xs sm:text-sm h-8 sm:h-10 px-2 sm:px-4">
                 This week
               </Button>
-              <Button variant="outline" size="icon" onClick={handleNextWeek}>
-                <ChevronRight className="h-4 w-4" />
+              <Button variant="outline" size="icon" onClick={handleNextWeek} className="h-8 w-8 sm:h-10 sm:w-10">
+                <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
           </div>
@@ -193,7 +193,7 @@ const Calendar = () => {
         {/* Calendar Grid */}
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <div className="min-w-[800px] lg:min-w-0">
+            <div className="min-w-[700px] xl:min-w-0">
               {/* Days Header */}
               <div className="grid grid-cols-8 border-b bg-muted/50">
                 <div className="p-2 text-sm font-medium border-r"></div>
