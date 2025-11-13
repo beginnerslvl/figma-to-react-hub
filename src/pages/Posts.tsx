@@ -62,6 +62,9 @@ export default function Posts() {
   // Saved posts feed
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
 
+  // Debug request preview
+  const [requestPreview, setRequestPreview] = useState<any>(null);
+
   // Fetch clients
   useEffect(() => {
     apiFetch("/clients/all-clients")
@@ -179,20 +182,23 @@ export default function Posts() {
       return;
     }
 
+    const requestBody = {
+      client_id: selectedClient,
+      category_id: selectedCategory,
+      topics: [selectedTopic],
+      number_of_posts: 1,
+      visual_style: selectedStyle,
+      ...(uploadedImageUrl && { reference_image: [uploadedImageUrl] }),
+    };
+
+    setRequestPreview(requestBody);
     setIsGenerating(true);
     setPost(null);
 
     try {
       const response = await apiFetch("/posts/create", {
         method: "POST",
-        body: JSON.stringify({
-          client_id: selectedClient,
-          category_id: selectedCategory,
-          topics: [selectedTopic],
-          number_of_posts: 1,
-          visual_style: selectedStyle,
-          ...(uploadedImageUrl && { reference_image: [uploadedImageUrl] }),
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -470,6 +476,21 @@ export default function Posts() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Debug Request Preview */}
+      {requestPreview && (
+        <Card className="border-yellow-500/50 bg-yellow-50 dark:bg-yellow-950/20">
+          <CardContent className="p-4">
+            <h3 className="font-semibold mb-2 text-sm">Debug: Request Payload</h3>
+            <pre className="text-xs bg-background p-3 rounded-lg overflow-auto max-h-48">
+              {JSON.stringify(requestPreview, null, 2)}
+            </pre>
+            <p className="text-xs text-muted-foreground mt-2">
+              Endpoint: POST {BASE_URL}/posts/create
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Post Feed Area */}
       <div className="space-y-6">
