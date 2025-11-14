@@ -503,6 +503,26 @@ export default function Posts() {
           <Button onClick={generatePost} disabled={isGenerating} className="w-full" size="lg">
             {isGenerating ? "Generating..." : "Generate Post"}
           </Button>
+
+          {/* Debug Section */}
+          <Card className="mt-4 bg-muted/30 border-dashed">
+            <CardContent className="p-4">
+              <Label className="text-xs font-semibold text-muted-foreground mb-2 block">
+                Debug: Request Payload
+              </Label>
+              <pre className="text-xs overflow-auto max-h-48 p-3 bg-background/50 rounded border text-foreground/80 font-mono">
+{JSON.stringify({
+  client_id: selectedClient,
+  category_id: selectedCategory,
+  topics: selectedTopic ? [selectedTopic] : [],
+  number_of_posts: 1,
+  custom_prompt: customPrompt || "",
+  visual_style: selectedStyle,
+  reference_image: uploadedImageUrl ? [uploadedImageUrl] : []
+}, null, 2)}
+              </pre>
+            </CardContent>
+          </Card>
         </CardContent>
       </Card>
 
