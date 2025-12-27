@@ -118,4 +118,42 @@ All colors MUST be HSL.
   .transition-smooth {
     @apply transition-all duration-300 ease-in-out;
   }
+
+  .glass-card {
+    background: hsl(0 0% 100% / 0.03);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.08);
+  }
+
+  .glass-nav {
+    background: hsl(222 47% 11% / 0.7);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid hsl(0 0% 100% / 0.05);
+  }
+
+  .text-gradient {
+    background: linear-gradient(to right, hsl(200 80% 80%), hsl(217 91% 60%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Dark theme for client portal login */
+.dark-theme {
+  --background: 222 47% 8%;
+  --foreground: 0 0% 98%;
+  --card: 222 47% 11%;
+  --card-foreground: 0 0% 98%;
+  --muted: 217 32% 18%;
+  --muted-foreground: 215 20% 65%;
+  --border: 217 32% 18%;
 }
